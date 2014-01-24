@@ -1,35 +1,73 @@
 body {
   padding: 1em 2em;
   margin: 0;
-  background-color: #49483e;
+  background-color: #272822;
   color: #f8f8f2;
   font-family: consolas, monospace;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 h1 {
-  margin: 0;
+  margin: 0 0 16px 0;
 }
 
 .project-tabs {
-
+  margin: 0;
+  padding: 0;
 }
 
 .project-tabs li {
-
+  margin: 0;
+  padding: 8px 16px;
+  list-style: none;
+  display: inline-block;
+  cursor: pointer;
+  border: 1px solid #5b5c56;
+  border-bottom: none;
 }
 
 .project-tabs li.active {
+  background-color: #49483e;
   text-decoration: underline;
+  cursor: default;
+}
+
+.project {
+  border: 1px solid #5b5c56;
+  padding: 12px;
+}
+
+.project .category-label {
+  margin: 8px 0;
+  font-size: 1em;
+}
+
+.project .category-label:first-child {
+  margin-top: 0;
+}
+
+.project .category-label:last-child {
+  margin-bottom: 0;
 }
 
 .todo-item {
   display: table;
-  width: 80em;
+  width: 100%;
+  padding: 6px 0;
+  margin: 8px 0;
+}
+
+.todo-item:last-child {
+  margin-bottom: 0;
+}
+
+.todo-item:hover {
+  background-color: #49483e;
 }
 
 .todo-item .todo-item-toolbar {
   display: table-cell;
+  text-align: center;
   height: 100%;
   width: 40px;
 }
