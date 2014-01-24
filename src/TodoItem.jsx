@@ -5,8 +5,12 @@
 var TodoItem = React.createClass({
   render: function() {
     return <div className="todo-item">
-      <span className="checkbox" >[{this.props.todo.done ? 'x' : ' '}]</span>
-      <div className="todo-item-text">{this.props.todo.text}</div>
+      <div className="todo-item-toolbar">
+        <span className="checkbox" onClick={this.props.onToggle.bind(null, this.props.todo)}>[{this.props.todo.done ? 'x' : ' '}]</span>
+      </div>
+      <div className="todo-item-text">
+        {this.props.todo.text}
+      </div>
     </div>
   }
 })

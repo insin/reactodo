@@ -5,10 +5,17 @@
 var TodoItem = require('TodoItem')
 
 var Project = React.createClass({
-  render: function() {
+  onToggle: function(todo) {
+    this.props.onToggle(this.props.project, todo)
+  }
+
+, render: function() {
     var doing, todos = [], dones = []
     this.props.project.todos.forEach(function(todo) {
-      var todoItem = <TodoItem todo={todo}/>
+      var todoItem = <TodoItem
+                       todo={todo}
+                       onToggle={this.onToggle}
+                     />
       if (this.props.project.doing === todo.id) {
         doing = todoItem
       }

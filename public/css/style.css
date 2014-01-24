@@ -23,6 +23,22 @@ h1 {
   text-decoration: underline;
 }
 
+.todo-item {
+  display: table;
+  width: 80em;
+}
+
+.todo-item .todo-item-toolbar {
+  display: table-cell;
+  height: 100%;
+  width: 40px;
+}
+
+.todo-item .todo-item-text {
+  display: table-cell;
+  height: 100%;
+}
+
 .checkbox {
   cursor: pointer;
 }

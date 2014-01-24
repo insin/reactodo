@@ -29,6 +29,14 @@ var Reactodo = React.createClass({
     this.setState({activeProjectId: projectId})
   }
 
+, toggle: function(project, todo) {
+    todo.done = !todo.done
+    if (project.doing === todo.id) {
+      project.doing = null
+    }
+    this.setState({projects: this.state.projects})
+  }
+
 , render: function() {
     var tabs = [], activeProject
     this.state.projects.forEach(function(project) {
@@ -40,7 +48,10 @@ var Reactodo = React.createClass({
         {project.name}
       </li>)
       if (isActiveProject) {
-        activeProject = <Project project={project}/>
+        activeProject = <Project
+                          project={project}
+                          onToggle={this.toggle}
+                        />
       }
     }.bind(this))
 
