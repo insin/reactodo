@@ -92,6 +92,7 @@ h1 {
 .todo-item .todo-item-text {
   display: table-cell;
   height: 100%;
+  white-space: pre;
 }
 
 .control {

@@ -13,13 +13,19 @@ var Project = React.createClass({
     this.props.onDoTodo(this.props.project, todo)
   }
 
+, onEditTodo: function(todo, newText) {
+    this.props.onEditTodo(this.props.project, todo, newText)
+  }
+
 , render: function() {
     var doing, todos = [], dones = []
     this.props.project.todos.forEach(function(todo) {
       var currentlyDoing = (this.props.project.doing === todo.id)
       var todoItem = <TodoItem
+                       key={todo.id}
                        todo={todo}
                        doing={currentlyDoing}
+                       onEdit={this.onEditTodo}
                        onToggle={this.onToggleTodo}
                        onDo={this.onDoTodo}
                      />

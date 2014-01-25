@@ -18,7 +18,7 @@ var Reactodo = React.createClass({
         ]}
       , {id: 2, name: 'DEF', doing: 5, todos: [
            {id: 4, done: true,  text: 'Test 4'}
-         , {id: 5, done: false, text: 'Test 5'}
+         , {id: 5, done: false, text: 'Test 5\n\nNew line'}
          , {id: 6, done: false, text: 'Test 6'}
         ]}
       ]
@@ -27,6 +27,11 @@ var Reactodo = React.createClass({
 
 , setActiveProject: function(projectId) {
     this.setState({activeProjectId: projectId})
+  }
+
+, editTodo: function(project, todo, newText) {
+    todo.text = newText
+    this.setState({projects: this.state.projects})
   }
 
 , toggleTodo: function(project, todo) {
@@ -63,6 +68,7 @@ var Reactodo = React.createClass({
       if (isActiveProject) {
         activeProject = <Project
                           project={project}
+                          onEditTodo={this.editTodo}
                           onToggleTodo={this.toggleTodo}
                           onDoTodo={this.doTodo}
                         />
