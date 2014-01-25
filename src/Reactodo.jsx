@@ -29,10 +29,23 @@ var Reactodo = React.createClass({
     this.setState({activeProjectId: projectId})
   }
 
-, toggle: function(project, todo) {
+, toggleTodo: function(project, todo) {
     todo.done = !todo.done
     if (project.doing === todo.id) {
       project.doing = null
+    }
+    this.setState({projects: this.state.projects})
+  }
+
+, doTodo: function(project, todo) {
+    if (project.doing === todo.id) {
+      project.doing = null
+    }
+    else {
+      project.doing = todo.id
+      if (todo.done) {
+        todo.done = false
+      }
     }
     this.setState({projects: this.state.projects})
   }
@@ -50,7 +63,8 @@ var Reactodo = React.createClass({
       if (isActiveProject) {
         activeProject = <Project
                           project={project}
-                          onToggle={this.toggle}
+                          onToggleTodo={this.toggleTodo}
+                          onDoTodo={this.doTodo}
                         />
       }
     }.bind(this))

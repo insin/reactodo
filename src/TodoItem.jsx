@@ -2,14 +2,28 @@
 
 'use strict';
 
+var $c = require('classNames')
+
 var TodoItem = React.createClass({
   render: function() {
-    return <div className="todo-item">
+    var doText = (this.props.doing ? 'STOP'
+                  : (this.props.todo.done? 'REDO' : 'DO'))
+
+    var todoItemClassName = $c('todo-item', {
+      'is-todo': !this.props.todo.done
+    , 'is-done': this.props.todo.done
+    , 'is-doing': this.props.doing
+    })
+
+    return <div className={todoItemClassName}>
       <div className="todo-item-toolbar">
-        <span className="checkbox" onClick={this.props.onToggle.bind(null, this.props.todo)}>[{this.props.todo.done ? 'x' : ' '}]</span>
+        <span className="control" onClick={this.props.onToggle.bind(null, this.props.todo)}>[{this.props.todo.done ? 'x' : ' '}]</span>
       </div>
       <div className="todo-item-text">
         {this.props.todo.text}
+      </div>
+      <div className="todo-item-dobar">
+        <span className="control" onClick={this.props.onDo.bind(null, this.props.todo)}>{doText}</span>
       </div>
     </div>
   }

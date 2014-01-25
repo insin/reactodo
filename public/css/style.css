@@ -72,11 +72,28 @@ h1 {
   width: 40px;
 }
 
+.todo-item .todo-item-dobar {
+  display: table-cell;
+  text-align: center;
+  height: 100%;
+  width: 50px;
+}
+
+.todo-item.is-doing .todo-item-dobar,
+.todo-item.is-done .todo-item-dobar {
+  visibility: hidden;
+}
+
+.todo-item.is-doing:hover .todo-item-dobar,
+.todo-item.is-done:hover .todo-item-dobar {
+  visibility: visible;
+}
+
 .todo-item .todo-item-text {
   display: table-cell;
   height: 100%;
 }
 
-.checkbox {
+.control {
   cursor: pointer;
 }
