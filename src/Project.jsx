@@ -5,8 +5,12 @@
 var TodoItem = require('TodoItem')
 
 var Project = React.createClass({
-  handleAddTodo: function() {
+  addTodo: function() {
     this.props.onAddTodo(this.props.project)
+  }
+
+, deleteDoneTodos: function() {
+    this.props.onDeleteDoneTodos(this.props.project)
   }
 
 , onToggleTodo: function(todo) {
@@ -47,12 +51,17 @@ var Project = React.createClass({
       }
     }.bind(this))
 
+    var deleteDone
+    if (dones.length > 0) {
+      deleteDone = <span className="control" title="Delete all completed TODOs" onClick={this.deleteDoneTodos}>-</span>
+    }
+
     return <div className="project">
       <h2>[DOING]</h2>
       {doing}
-      <h2>[TODO] <span className="control" title="Add TODO" onClick={this.handleAddTodo}>+</span></h2>
+      <h2>[TODO] <span className="control" title="Add TODO" onClick={this.addTodo}>+</span></h2>
       {todos}
-      <h2>[DONE]</h2>
+      <h2>[DONE] {deleteDone}</h2>
       {dones}
     </div>
   }

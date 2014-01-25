@@ -97,6 +97,11 @@ var Reactodo = React.createClass({
     }
   }
 
+, deleteDoneTodos: function(project) {
+    project.todos = project.todos.filter(function(todo) { return !todo.done })
+    this.setState({projects: this.state.projects})
+  }
+
 , render: function() {
     var tabs = [], content
 
@@ -117,6 +122,7 @@ var Reactodo = React.createClass({
                     onToggleTodo={this.toggleTodo}
                     onDoTodo={this.doTodo}
                     onDeleteTodo={this.deleteTodo}
+                    onDeleteDoneTodos={this.deleteDoneTodos}
                   />
       }
     }.bind(this))
