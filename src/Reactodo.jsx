@@ -70,6 +70,15 @@ var Reactodo = React.createClass({
     this.setState({projects: this.state.projects})
   }
 
+, deleteTodo: function(project, todo) {
+    for (var i = 0, l = project.todos.length; i < l; i++) {
+      if (project.todos[i].id === todo.id) {
+        project.todos.splice(i, 1)
+        return this.setState({projects: this.state.projects})
+      }
+    }
+  }
+
 , render: function() {
     var tabs = [], activeProject
     this.state.projects.forEach(function(project) {
@@ -88,6 +97,7 @@ var Reactodo = React.createClass({
                           onEditTodo={this.editTodo}
                           onToggleTodo={this.toggleTodo}
                           onDoTodo={this.doTodo}
+                          onDeleteTodo={this.deleteTodo}
                         />
       }
     }.bind(this))

@@ -3,6 +3,7 @@
 'use strict';
 
 var $c = require('classNames')
+var trim = require('trim')
 
 var TodoItem = React.createClass({
   getInitialState: function() {
@@ -31,9 +32,14 @@ var TodoItem = React.createClass({
 
 , handleTextBlur: function() {
     if (this.state.editing) {
-      var newText = this.refs.text.getDOMNode().innerHTML.replace(/<br ?\/?>/g, '\n')
+      var newText = trim(this.refs.text.getDOMNode().innerHTML.replace(/<br ?\/?>/g, '\n'))
       this.setState({editing: false})
-      this.props.onEdit(this.props.todo, newText)
+      if (!newText) {
+        this.props.onDelete(this.props.todo)
+      }
+      else {
+        this.props.onEdit(this.props.todo, newText)
+      }
     }
   }
 

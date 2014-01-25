@@ -21,6 +21,10 @@ var Project = React.createClass({
     this.props.onEditTodo(this.props.project, todo, newText)
   }
 
+, onDeleteTodo: function(todo) {
+    this.props.onDeleteTodo(this.props.project, todo)
+  }
+
 , render: function() {
     var doing, todos = [], dones = []
     this.props.project.todos.forEach(function(todo) {
@@ -33,6 +37,7 @@ var Project = React.createClass({
                        onEdit={this.onEditTodo}
                        onToggle={this.onToggleTodo}
                        onDo={this.onDoTodo}
+                       onDelete={this.onDeleteTodo}
                      />
       if (currentlyDoing) {
         doing = todoItem
