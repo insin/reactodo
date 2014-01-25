@@ -7,7 +7,19 @@ var $c = require('classNames')
 var TodoItem = React.createClass({
   getInitialState: function() {
     return {
-      editing: false
+      editing: this.props.initialEdit || false
+    }
+  }
+
+, componentDidMount: function() {
+    if (this.props.initialEdit) {
+      this.refs.text.getDOMNode().focus()
+    }
+  }
+
+, componentDidUpdate: function (prevProps, prevState) {
+    if (this.state.editing && !prevState.editing) {
+      this.refs.text.getDOMNode().focus()
     }
   }
 
@@ -40,7 +52,7 @@ var TodoItem = React.createClass({
         <span className="control" onClick={this.props.onToggle.bind(null, this.props.todo)}>[{this.props.todo.done ? 'x' : ' '}]</span>
       </div>
       <div className="todo-item-text" ref="text" onClick={this.handleTextClick} onBlur={this.handleTextBlur} contentEditable={this.state.editing}>
-        {this.props.todo.text}
+        {this.props.todo.text || ' '}
       </div>
       <div className="todo-item-dobar">
         <span className="control" onClick={this.props.onDo.bind(null, this.props.todo)}>{doText}</span>

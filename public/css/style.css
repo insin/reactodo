@@ -67,16 +67,18 @@ h1 {
 
 .todo-item .todo-item-toolbar {
   display: table-cell;
-  text-align: center;
   height: 100%;
-  width: 40px;
+  width: 1px;
+  padding: 0 12px 0 5px;
+  white-space: pre;
 }
 
 .todo-item .todo-item-dobar {
   display: table-cell;
   text-align: center;
   height: 100%;
-  width: 50px;
+  width: 1px;
+  padding: 0 6px 0 0;
 }
 
 .todo-item.is-doing .todo-item-dobar,

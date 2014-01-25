@@ -6,10 +6,13 @@ var Project = require('Project')
 
 var $c = require('classNames')
 
+var todoIdSeed = 7
+
 var Reactodo = React.createClass({
   getInitialState: function() {
     return {
       activeProjectId: 2
+    , editTodoId: null
     , projects: [
         {id: 1, name: 'ABC', doing: null, todos: [
           {id: 1, done: true,  text: 'Test 1'}
@@ -29,9 +32,21 @@ var Reactodo = React.createClass({
     this.setState({activeProjectId: projectId})
   }
 
+, addTodo: function(project) {
+    var id = todoIdSeed++
+    project.todos.unshift({id: id , done: false, text: ''})
+    this.setState({
+      editTodoId: id
+    , projects: this.state.projects
+    })
+  }
+
 , editTodo: function(project, todo, newText) {
     todo.text = newText
-    this.setState({projects: this.state.projects})
+    this.setState({
+      editTodoId: null
+    , projects: this.state.projects
+    })
   }
 
 , toggleTodo: function(project, todo) {
@@ -68,6 +83,8 @@ var Reactodo = React.createClass({
       if (isActiveProject) {
         activeProject = <Project
                           project={project}
+                          editTodoId={this.state.editTodoId}
+                          onAddTodo={this.addTodo}
                           onEditTodo={this.editTodo}
                           onToggleTodo={this.toggleTodo}
                           onDoTodo={this.doTodo}

@@ -5,7 +5,11 @@
 var TodoItem = require('TodoItem')
 
 var Project = React.createClass({
-  onToggleTodo: function(todo) {
+  handleAddTodo: function() {
+    this.props.onAddTodo(this.props.project)
+  }
+
+, onToggleTodo: function(todo) {
     this.props.onToggleTodo(this.props.project, todo)
   }
 
@@ -24,6 +28,7 @@ var Project = React.createClass({
       var todoItem = <TodoItem
                        key={todo.id}
                        todo={todo}
+                       initialEdit={this.props.editTodoId === todo.id}
                        doing={currentlyDoing}
                        onEdit={this.onEditTodo}
                        onToggle={this.onToggleTodo}
@@ -40,7 +45,7 @@ var Project = React.createClass({
     return <div className="project">
       <h2 className="category-label">[DOING]</h2>
       {doing}
-      <h2 className="category-label">[TODO]</h2>
+      <h2 className="category-label">[TODO] <span className="control" title="Add TODO" onClick={this.handleAddTodo}>+</span></h2>
       {todos}
       <h2 className="category-label">[DONE]</h2>
       {dones}
