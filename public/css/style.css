@@ -22,18 +22,23 @@ h1 {
   list-style: none;
   display: inline-block;
   cursor: pointer;
-  border: 1px solid #5b5c56;
-  border-bottom: none;
+  border-top-right-radius: 12px;
+  border-top-left-radius: 12px;
+}
+
+.project-tabs li:hover {
+  background-color: #49483e;
 }
 
 .project-tabs li.active {
-  background-color: #49483e;
-  text-decoration: underline;
+  background-color: #5b5c56;
   cursor: default;
 }
 
 .project {
   border: 1px solid #5b5c56;
+  border-bottom-right-radius: 12px;
+  border-bottom-left-radius: 12px;
   padding: 12px;
 }
 
