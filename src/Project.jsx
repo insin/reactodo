@@ -48,11 +48,11 @@ var Project = React.createClass({
     }.bind(this))
 
     return <div className="project">
-      <h2 className="category-label">[DOING]</h2>
+      <h2>[DOING]</h2>
       {doing}
-      <h2 className="category-label">[TODO] <span className="control" title="Add TODO" onClick={this.handleAddTodo}>+</span></h2>
+      <h2>[TODO] <span className="control" title="Add TODO" onClick={this.handleAddTodo}>+</span></h2>
       {todos}
-      <h2 className="category-label">[DONE]</h2>
+      <h2>[DONE]</h2>
       {dones}
     </div>
   }

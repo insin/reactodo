@@ -11,12 +11,48 @@ h1 {
   margin: 0 0 16px 0;
 }
 
-.project-tabs {
+input[type=text] {
+  background-color: #272822;
+  color: #f8f8f2;
+  border: none;
+  border-bottom: 1px solid #5b5c56;
+  font-family: consolas, monospace;
+  font-size: 16px;
+}
+
+.button {
+  background-color: #49483e;
+  color: #f8f8f2;
+  border-radius: 9px;
+  cursor: pointer;
+  padding: 2px 8px;
+  font-weight: normal;
+}
+
+.button:hover {
+  background-color: #5b5c56;
+}
+
+.tab-bar {
+  display: table;
+  width: 100%;
+}
+
+.tabs {
   margin: 0;
   padding: 0;
 }
 
-.project-tabs li {
+.project-tabs {
+  display: table-cell;
+}
+
+.app-tabs {
+  display: table-cell;
+  width: 1px;
+}
+
+.tabs li {
   margin: 0;
   padding: 8px 16px;
   list-style: none;
@@ -26,32 +62,32 @@ h1 {
   border-top-left-radius: 12px;
 }
 
-.project-tabs li:hover {
+.tabs li:hover {
   background-color: #49483e;
 }
 
-.project-tabs li.active {
+.tabs li.active {
   background-color: #5b5c56;
   cursor: default;
 }
 
-.project {
+.panel {
   border: 1px solid #5b5c56;
   border-bottom-right-radius: 12px;
   border-bottom-left-radius: 12px;
   padding: 12px;
 }
 
-.project .category-label {
+h2 {
   margin: 8px 0;
   font-size: 1em;
 }
 
-.project .category-label:first-child {
+h2:first-child {
   margin-top: 0;
 }
 
-.project .category-label:last-child {
+h2:last-child {
   margin-bottom: 0;
 }
 
