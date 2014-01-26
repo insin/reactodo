@@ -5,6 +5,7 @@
 var Constants = require('Constants')
 var Project = require('Project')
 var Settings = require('Settings')
+var Welcome = require('Welcome')
 
 var $c = require('classNames')
 var extend = require('extend')
@@ -163,6 +164,9 @@ var Reactodo = React.createClass({
                   onToggleProjectVisible={this.toggleProjectVisible}
                   onDeleteProject={this.deleteProject}
                 />
+    }
+    else if (this.state.projects.length === 0) {
+      content = <Welcome onShowSettings={this.showSettings}/>
     }
 
     return <div>
