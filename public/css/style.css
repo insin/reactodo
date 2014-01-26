@@ -11,6 +11,10 @@ h1 {
   margin: 0 0 16px 0;
 }
 
+td, th {
+  padding: 5px 10px;
+}
+
 input[type=text] {
   background-color: #272822;
   color: #f8f8f2;

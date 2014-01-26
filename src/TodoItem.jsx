@@ -2,6 +2,8 @@
 
 'use strict';
 
+var Constants = require('Constants')
+
 var $c = require('classNames')
 var trim = require('trim')
 
@@ -55,7 +57,7 @@ var TodoItem = React.createClass({
 
     return <div className={todoItemClassName}>
       <div className="todo-item-toolbar">
-        <span className="control" onClick={this.props.onToggle.bind(null, this.props.todo)}>[{this.props.todo.done ? 'x' : ' '}]</span>
+        <span className="control" onClick={this.props.onToggle.bind(null, this.props.todo)}>[{this.props.todo.done ? Constants.CHECK : Constants.NBSP}]</span>
       </div>
       <div className="todo-item-text" ref="text" onClick={this.handleTextClick} onBlur={this.handleTextBlur} contentEditable={this.state.editing}>
         {this.props.todo.text || ' '}

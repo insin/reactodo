@@ -17,12 +17,12 @@ var Reactodo = React.createClass({
     , editTodoId: null
     , showingSettings: false
     , projects: [
-        {id: 1, name: 'ABC', doing: null, todos: [
+        {id: 1, name: 'ABC', hidden: false, doing: null, todos: [
           {id: 1, done: true,  text: 'Test 1'}
         , {id: 2, done: false, text: 'Test 2'}
         , {id: 3, done: false, text: 'Test 3'}
         ]}
-      , {id: 2, name: 'DEF', doing: 5, todos: [
+      , {id: 2, name: 'DEF', hidden: false, doing: 5, todos: [
            {id: 4, done: true,  text: 'Test 4'}
          , {id: 5, done: false, text: 'Test 5\n\nNew line'}
          , {id: 6, done: false, text: 'Test 6'}
@@ -47,6 +47,26 @@ var Reactodo = React.createClass({
 , addProject: function(projectName) {
     var id = projectIdSeed++
     this.state.projects.push({id: id, name: projectName, doing: null, todos: []})
+    this.setState({projects: this.state.projects})
+  }
+
+, moveProjectUp: function(project, index) {
+    this.state.projects.splice(index - 1, 0, this.state.projects.splice(index, 1)[0])
+    this.setState({projects: this.state.projects})
+  }
+
+, moveProjectDown: function(project, index) {
+    this.state.projects.splice(index + 1, 0, this.state.projects.splice(index, 1)[0])
+    this.setState({projects: this.state.projects})
+  }
+
+, toggleProjectVisible: function(project) {
+    project.hidden = !project.hidden
+    this.setState({projects: this.state.projects})
+  }
+
+, deleteProject: function(project, index) {
+    this.state.projects.splice(index, 1)
     this.setState({projects: this.state.projects})
   }
 
@@ -106,6 +126,7 @@ var Reactodo = React.createClass({
     var tabs = [], content
 
     this.state.projects.forEach(function(project) {
+      if (project.hidden) { return }
       var isActiveProject = (!this.state.showingSettings &&
                              this.state.activeProjectId === project.id)
       tabs.push(<li key={project.id}
@@ -131,6 +152,10 @@ var Reactodo = React.createClass({
       content = <Settings
                   projects={this.state.projects}
                   onAddProject={this.addProject}
+                  onMoveProjectUp={this.moveProjectUp}
+                  onMoveProjectDown={this.moveProjectDown}
+                  onToggleProjectVisible={this.toggleProjectVisible}
+                  onDeleteProject={this.deleteProject}
                 />
     }
 
