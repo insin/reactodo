@@ -124,13 +124,11 @@ h2:last-child {
   padding: 0 6px 0 12px;
 }
 
-.todo-item.is-doing .todo-item-dobar,
-.todo-item.is-done .todo-item-dobar {
+.todo-item .todo-item-dobar {
   visibility: hidden;
 }
 
-.todo-item.is-doing:hover .todo-item-dobar,
-.todo-item.is-done:hover .todo-item-dobar {
+.todo-item:hover .todo-item-dobar {
   visibility: visible;
 }
 
