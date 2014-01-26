@@ -5,7 +5,13 @@
 var TodoItem = require('TodoItem')
 
 var Project = React.createClass({
-  addTodo: function() {
+  getInitialState: function() {
+    return {
+      dragoverTodoId: null
+    }
+  }
+
+, addTodo: function() {
     this.props.onAddTodo(this.props.project)
   }
 
@@ -31,19 +37,38 @@ var Project = React.createClass({
     this.props.onDeleteTodo(this.props.project, todo)
   }
 
+, onDragOverTodo: function(todo) {
+    if (this.state.dragoverTodoId != todo.id) {
+      this.setState({dragoverTodoId: todo.id})
+    }
+  }
+
+, onDragEndTodo: function() {
+    this.setState({dragoverTodoId: null})
+  }
+
+, onMoveTodo: function(fromIndex, toIndex) {
+    this.props.onMoveTodo(this.props.project, fromIndex, toIndex)
+  }
+
 , render: function() {
     var doing, todos = [], dones = []
-    this.props.project.todos.forEach(function(todo) {
+    this.props.project.todos.forEach(function(todo, index) {
       var currentlyDoing = (this.props.project.doing === todo.id)
       var todoItem = <TodoItem
                        key={todo.id}
                        todo={todo}
+                       index={index}
+                       dragover={this.state.dragoverTodoId === todo.id}
                        initialEdit={this.props.editTodoId === todo.id}
                        doing={currentlyDoing}
                        onEdit={this.onEditTodo}
                        onToggle={this.onToggleTodo}
                        onDo={this.onDoTodo}
                        onDelete={this.onDeleteTodo}
+                       onDragOver={this.onDragOverTodo}
+                       onDragEnd={this.onDragEndTodo}
+                       onMoveTodo={this.onMoveTodo}
                      />
       if (currentlyDoing) {
         doing = todoItem

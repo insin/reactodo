@@ -10,7 +10,8 @@ var trim = require('trim')
 var TodoItem = React.createClass({
   getInitialState: function() {
     return {
-      editing: this.props.initialEdit || false
+      dragging: false
+    , editing: this.props.initialEdit || false
     }
   }
 
@@ -45,25 +46,55 @@ var TodoItem = React.createClass({
     }
   }
 
-, render: function() {
-    var doText = (this.props.doing ? 'STOP'
-                  : (this.props.todo.done? 'REDO' : 'DO'))
+, handleDragStart: function(e) {
+    e.nativeEvent.dataTransfer.setData('index', this.props.index)
+    this.setState({dragging: true})
+  }
 
+, handleDragEnd: function(e) {
+    this.setState({dragging: false})
+    this.props.onDragEnd()
+  }
+
+, handleDragOver: function(e) {
+    e.preventDefault()
+    e.nativeEvent.dataTransfer.dropEffect = 'move'
+    this.props.onDragOver(this.props.todo)
+  }
+
+, handleDrop: function(e) {
+    e.preventDefault()
+    var fromIndex = e.nativeEvent.dataTransfer.getData('index')
+    this.props.onMoveTodo(fromIndex, this.props.index)
+  }
+
+, render: function() {
     var todoItemClassName = $c('todo-item', {
       'is-todo': !this.props.todo.done
     , 'is-done': this.props.todo.done
     , 'is-doing': this.props.doing
+    , 'dragging': this.state.dragging
+    , 'dragover': this.props.dragover
     })
 
-    return <div className={todoItemClassName}>
+    return <div
+             className={todoItemClassName}
+             onDragOver={this.handleDragOver}
+             onDrop={this.handleDrop}
+           >
       <div className="todo-item-toolbar">
         <span className="control" onClick={this.props.onToggle.bind(null, this.props.todo)}>[{this.props.todo.done ? Constants.CHECK : Constants.NBSP}]</span>
       </div>
       <div className="todo-item-text" ref="text" onClick={this.handleTextClick} onBlur={this.handleTextBlur} contentEditable={this.state.editing}>
         {this.props.todo.text || ' '}
       </div>
-      <div className="todo-item-dobar">
-        <span className="control" onClick={this.props.onDo.bind(null, this.props.todo)}>{doText}</span>
+      <div className="todo-item-handle">
+        <span
+          className="handle"
+          draggable="true"
+          onDragStart={this.handleDragStart}
+          onDragEnd={this.handleDragEnd}
+        >{Constants.DRAG_HANDLE}</span>
       </div>
     </div>
   }

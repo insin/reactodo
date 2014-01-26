@@ -132,6 +132,14 @@ input[type=text] {
   background-color: #49483e;
 }
 
+.todo-item.dragging {
+  opacity: 0.5;
+}
+
+.todo-item.dragover {
+  outline: 1px dashed #5b5c56;
+}
+
 .todo-item .todo-item-toolbar {
   display: table-cell;
   height: 100%;
@@ -140,12 +148,24 @@ input[type=text] {
   white-space: pre;
 }
 
-.todo-item .todo-item-dobar {
+.todo-item .todo-item-handle {
   display: table-cell;
   text-align: center;
   height: 100%;
   width: 1px;
   padding: 0 6px 0 12px;
+}
+
+.handle {
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+  cursor: grab;
+}
+
+.dragging .handle {
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing;
+  cursor: grabbing;
 }
 
 .todo-item .todo-item-dobar {

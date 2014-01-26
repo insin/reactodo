@@ -93,6 +93,11 @@ var Reactodo = React.createClass({
     })
   }
 
+, moveTodo: function(project, fromIndex, toIndex) {
+    project.todos.splice(toIndex, 0, project.todos.splice(fromIndex, 1)[0])
+    this.setState({projects: this.state.projects})
+  }
+
 , toggleTodo: function(project, todo) {
     todo.done = !todo.done
     if (project.doing === todo.id) {
@@ -150,6 +155,7 @@ var Reactodo = React.createClass({
                     onDoTodo={this.doTodo}
                     onDeleteTodo={this.deleteTodo}
                     onDeleteDoneTodos={this.deleteDoneTodos}
+                    onMoveTodo={this.moveTodo}
                   />
       }
     }.bind(this))
