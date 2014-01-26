@@ -10,7 +10,9 @@ var Project = React.createClass({
   }
 
 , deleteDoneTodos: function() {
-    this.props.onDeleteDoneTodos(this.props.project)
+    if (confirm('Are you sure you want to delete all completed TODOs in ' + this.props.project.name + '?')) {
+      this.props.onDeleteDoneTodos(this.props.project)
+    }
   }
 
 , onToggleTodo: function(todo) {
