@@ -6,4 +6,5 @@ module.exports = {
 , UP_ARROW: '\u2191'
 , DOWN_ARROW: '\u2193'
 , CHECK: 'X'
+, SETTINGS: '\u2630'
 }

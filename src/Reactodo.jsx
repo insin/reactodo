@@ -2,33 +2,33 @@
 
 'use strict';
 
+var Constants = require('Constants')
 var Project = require('Project')
 var Settings = require('Settings')
 
 var $c = require('classNames')
+var extend = require('extend')
+var uuid = require('uuid')
 
-var projectIdSeed = 3
-var todoIdSeed = 7
+var LOCALSTORAGE_STATE = 'reactodo-state'
 
 var Reactodo = React.createClass({
   getInitialState: function() {
-    return {
-      activeProjectId: 2
+    var stateJSON = localStorage[LOCALSTORAGE_STATE]
+    var state = stateJSON ? JSON.parse(stateJSON) : {}
+    return extend({
+      activeProjectId: null
     , editTodoId: null
     , showingSettings: false
-    , projects: [
-        {id: 1, name: 'ABC', hidden: false, doing: null, todos: [
-          {id: 1, done: true,  text: 'Test 1'}
-        , {id: 2, done: false, text: 'Test 2'}
-        , {id: 3, done: false, text: 'Test 3'}
-        ]}
-      , {id: 2, name: 'DEF', hidden: false, doing: 5, todos: [
-           {id: 4, done: true,  text: 'Test 4'}
-         , {id: 5, done: false, text: 'Test 5\n\nNew line'}
-         , {id: 6, done: false, text: 'Test 6'}
-        ]}
-      ]
-    }
+    , projects: []
+    }, state)
+  }
+
+, componentDidUpdate: function() {
+    localStorage[LOCALSTORAGE_STATE] = JSON.stringify({
+      activeProjectId: this.state.activeProjectId
+    , projects: this.state.projects
+    })
   }
 
 , setActiveProject: function(projectId) {
@@ -45,7 +45,7 @@ var Reactodo = React.createClass({
   }
 
 , addProject: function(projectName) {
-    var id = projectIdSeed++
+    var id = uuid()
     this.state.projects.push({id: id, name: projectName, doing: null, todos: []})
     this.setState({projects: this.state.projects})
   }
@@ -71,7 +71,7 @@ var Reactodo = React.createClass({
   }
 
 , addTodo: function(project) {
-    var id = todoIdSeed++
+    var id = uuid()
     project.todos.unshift({id: id , done: false, text: ''})
     this.setState({
       editTodoId: id
@@ -168,8 +168,7 @@ var Reactodo = React.createClass({
             className={$c({active: this.state.showingSettings})}
             onClick={this.showSettings}
             title="Settings"
-            dangerouslySetInnerHTML={{__html: '&#9776;'}}
-          />
+          >{Constants.SETTINGS}</li>
         </ul>
       </div>
       <div className="panel">
