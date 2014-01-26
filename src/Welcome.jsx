@@ -9,6 +9,7 @@ var Welcome = React.createClass({
     return <div>
       <h2>[WELCOME]</h2>
       <p>Reactodo is a TODO list app with 3 fixed categories - DOING, TODO and DONE - and multiple TODO lists, or projects.</p>
+      <p>Any projects and TODOs you create are only stored locally, so will only be available on this machine and browser.</p>
       <p>To set up some projects, click the <span className="control" title="Settings" onClick={this.props.onShowSettings}>{Constants.SETTINGS}</span> icon, here or over in the corner.</p>
       <h2>[TIPS]</h2>
       <ul>
