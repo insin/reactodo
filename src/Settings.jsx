@@ -4,16 +4,22 @@
 
 var Constants = require('Constants')
 
+var trim = require('trim')
+
 var Settings = React.createClass({
   getInitialState: function() {
     return {
       addingProject: false
+    , editingProjectName: null
     }
   }
 
 , componentDidUpdate: function(prevProps, prevState) {
-    if (this.state.addingProject && ! prevState.addingProject) {
+    if (this.state.addingProject && !prevState.addingProject) {
       this.refs.projectName.getDOMNode().focus()
+    }
+    if (this.state.editingProjectName && !prevState.editingProjectName) {
+      this.refs.editProjectName.getDOMNode().focus()
     }
   }
 
@@ -22,7 +28,7 @@ var Settings = React.createClass({
       this.setState({addingProject: true})
     }
     else {
-      var projectName = this.refs.projectName.getDOMNode().value
+      var projectName = trim(this.refs.projectName.getDOMNode().value)
       if (projectName) {
         this.setState({addingProject: false})
         this.props.onAddProject(projectName)
@@ -30,9 +36,43 @@ var Settings = React.createClass({
     }
   }
 
+, cancelAddProject: function() {
+    this.setState({addingProject: false})
+  }
+
+, editProjectName: function(project) {
+    if (this.state.editingProjectName === null) {
+      this.setState({editingProjectName: project.id})
+    }
+    else {
+      var projectName = trim(this.refs.editProjectName.getDOMNode().value)
+      if (projectName) {
+        this.setState({editingProjectName: null})
+        this.props.onEditProjectName(project, projectName)
+      }
+    }
+  }
+
+, cancelEditProjectName: function() {
+    this.setState({editingProjectName: null})
+  }
+
 , handleAddProjectKeyDown: function(e) {
-    if (e.which !== Constants.ENTER_KEY) { return }
-    this.addProject()
+    if (e.which === Constants.ENTER_KEY) {
+      this.addProject()
+    }
+    else if (e.which === Constants.ESCAPE_KEY) {
+      this.cancelAddProject()
+    }
+  }
+
+, handleEditProjectNameKeyDown: function(project, e) {
+    if (e.which === Constants.ENTER_KEY) {
+      this.editProjectName(project)
+    }
+    else if (e.which === Constants.ESCAPE_KEY) {
+      this.cancelEditProjectName()
+    }
   }
 
 , moveProjectUp: function(project, index) {
@@ -65,16 +105,19 @@ var Settings = React.createClass({
         />
         {' '}
         <span className="button" onClick={this.addProject}>Add</span>
+        {' '}
+        <span className="button" onClick={this.cancelAddProject}>Cancel</span>
       </span>
     }
     else {
-      addProject = <span className="control" onClick={this.addProject}>+</span>
+      addProject = <span className="control" onClick={this.addProject} title="Add Project">+</span>
     }
 
     var projects = this.props.projects.map(this.renderProject)
 
     return <div className="settings">
       <h2>[PROJECTS] {addProject}</h2>
+      <p>Click on a project name to edit it.</p>
       <table>
         <thead>
           <tr>
@@ -100,9 +143,28 @@ var Settings = React.createClass({
     var down = (last ? <span>{Constants.NBSP}</span> :
       <span className="control" onClick={this.moveProjectDown.bind(null, project, i)}>{Constants.DOWN_ARROW}</span>
     )
+    var projectName
+    if (this.state.editingProjectName === project.id) {
+      projectName = <span>
+        <input
+          type="text"
+          size="15"
+          defaultValue={project.name}
+          ref="editProjectName"
+          onKeyDown={this.handleEditProjectNameKeyDown.bind(null, project)}
+        />
+        {' '}
+        <span className="button" onClick={this.editProjectName.bind(null, project)}>Edit</span>
+        {' '}
+        <span className="button" onClick={this.cancelEditProjectName}>Cancel</span>
+      </span>
+    }
+    else {
+      projectName = <span className="control" onClick={this.editProjectName.bind(null, project)}>{project.name}</span>
+    }
 
     return <tr key={project.id}>
-      <td>{project.name}</td>
+      <td>{projectName}</td>
       <td>{up}{Constants.NBSP}{down}</td>
       <td>
         <span className="control" onClick={this.toggleProjectVisible.bind(null, project)}>[{project.hidden ? Constants.NBSP : Constants.CHECK}]</span>

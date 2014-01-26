@@ -50,6 +50,11 @@ var Reactodo = React.createClass({
     this.setState({projects: this.state.projects})
   }
 
+, editProjectName: function(project, projectName) {
+    project.name = projectName
+    this.setState({projects: this.state.projects})
+  }
+
 , moveProjectUp: function(project, index) {
     this.state.projects.splice(index - 1, 0, this.state.projects.splice(index, 1)[0])
     this.setState({projects: this.state.projects})
@@ -152,6 +157,7 @@ var Reactodo = React.createClass({
       content = <Settings
                   projects={this.state.projects}
                   onAddProject={this.addProject}
+                  onEditProjectName={this.editProjectName}
                   onMoveProjectUp={this.moveProjectUp}
                   onMoveProjectDown={this.moveProjectDown}
                   onToggleProjectVisible={this.toggleProjectVisible}

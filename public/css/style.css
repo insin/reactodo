@@ -7,12 +7,30 @@ body {
   font-size: 16px;
 }
 
+a {
+  color: #f8f8f2;
+}
+
 h1 {
   margin: 0 0 16px 0;
 }
 
+h2 {
+  margin: 8px 0;
+  font-size: 1em;
+}
+
+h2:first-child {
+  margin-top: 0;
+}
+
+h2:last-child {
+  margin-bottom: 0;
+}
+
 td, th {
   padding: 5px 10px;
+  text-align: left;
 }
 
 input[type=text] {
@@ -22,6 +40,16 @@ input[type=text] {
   border-bottom: 1px solid #5b5c56;
   font-family: consolas, monospace;
   font-size: 16px;
+}
+
+.footer {
+  font-size: small;
+  text-align: center;
+  color: #5b5c56;
+}
+
+.footer a {
+  color: #5b5c56;
 }
 
 .button {
@@ -84,17 +112,9 @@ input[type=text] {
   padding: 12px;
 }
 
-h2 {
-  margin: 8px 0;
-  font-size: 1em;
-}
-
-h2:first-child {
-  margin-top: 0;
-}
-
-h2:last-child {
-  margin-bottom: 0;
+.panel p {
+  margin-left: 12px;
+  margin-right: 12px;
 }
 
 .todo-item {
