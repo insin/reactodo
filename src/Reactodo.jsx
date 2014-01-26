@@ -107,15 +107,15 @@ var Reactodo = React.createClass({
   }
 
 , doTodo: function(project, todo) {
-    if (project.doing === todo.id) {
-      project.doing = null
+    project.doing = todo.id
+    if (todo.done) {
+      todo.done = false
     }
-    else {
-      project.doing = todo.id
-      if (todo.done) {
-        todo.done = false
-      }
-    }
+    this.setState({projects: this.state.projects})
+  }
+
+, stopDoingTodo: function(project) {
+    project.doing = null
     this.setState({projects: this.state.projects})
   }
 
@@ -153,6 +153,7 @@ var Reactodo = React.createClass({
                     onEditTodo={this.editTodo}
                     onToggleTodo={this.toggleTodo}
                     onDoTodo={this.doTodo}
+                    onStopDoingTodo={this.stopDoingTodo}
                     onDeleteTodo={this.deleteTodo}
                     onDeleteDoneTodos={this.deleteDoneTodos}
                     onMoveTodo={this.moveTodo}

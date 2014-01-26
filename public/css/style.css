@@ -132,12 +132,19 @@ input[type=text] {
   background-color: #49483e;
 }
 
-.todo-item.dragging {
+.dragging {
   opacity: 0.5;
 }
 
-.todo-item.dragover {
+.dropzone.dragover {
   outline: 1px dashed #5b5c56;
+}
+
+.doing-dropzone.empty {
+  margin: 8px 0;
+  padding: 6px 0;
+  color: #5b5c56;
+  text-align: center;
 }
 
 .todo-item .todo-item-toolbar {
@@ -168,11 +175,11 @@ input[type=text] {
   cursor: grabbing;
 }
 
-.todo-item .todo-item-dobar {
+.todo-item .todo-item-handle {
   visibility: hidden;
 }
 
-.todo-item:hover .todo-item-dobar {
+.todo-item:hover .todo-item-handle {
   visibility: visible;
 }
 

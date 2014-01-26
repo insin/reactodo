@@ -9,4 +9,5 @@ module.exports = {
 , CHECK: 'X'
 , SETTINGS: '\u2699'
 , DRAG_HANDLE: '\u2630'
+, STOP: '\u25A0'
 }

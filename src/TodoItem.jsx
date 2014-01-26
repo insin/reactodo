@@ -73,22 +73,14 @@ var TodoItem = React.createClass({
       'is-todo': !this.props.todo.done
     , 'is-done': this.props.todo.done
     , 'is-doing': this.props.doing
+    , 'dropzone': !this.props.doing
     , 'dragging': this.state.dragging
     , 'dragover': this.props.dragover
     })
 
-    return <div
-             className={todoItemClassName}
-             onDragOver={this.handleDragOver}
-             onDrop={this.handleDrop}
-           >
-      <div className="todo-item-toolbar">
-        <span className="control" onClick={this.props.onToggle.bind(null, this.props.todo)}>[{this.props.todo.done ? Constants.CHECK : Constants.NBSP}]</span>
-      </div>
-      <div className="todo-item-text" ref="text" onClick={this.handleTextClick} onBlur={this.handleTextBlur} contentEditable={this.state.editing}>
-        {this.props.todo.text || ' '}
-      </div>
-      <div className="todo-item-handle">
+    var dragHandle
+    if (!this.props.doing) {
+      dragHandle = <div className="todo-item-handle">
         <span
           className="handle"
           draggable="true"
@@ -96,6 +88,23 @@ var TodoItem = React.createClass({
           onDragEnd={this.handleDragEnd}
         >{Constants.DRAG_HANDLE}</span>
       </div>
+    }
+
+    // onDrop is handled by the [DOING] dropZone if that's where this TODO is
+    // being displayed.
+    return <div
+             className={todoItemClassName}
+             onDragOver={this.handleDragOver}
+             onDragLeave={!this.props.doing && this.props.onCancelDragOver}
+             onDrop={!this.props.doing && this.handleDrop}
+           >
+      <div className="todo-item-toolbar">
+        <span className="control" onClick={this.props.onToggle.bind(null, this.props.todo)}>[{this.props.todo.done ? Constants.CHECK : Constants.NBSP}]</span>
+      </div>
+      <div className="todo-item-text" ref="text" onClick={this.handleTextClick} onBlur={this.handleTextBlur} contentEditable={this.state.editing}>
+        {this.props.todo.text || ' '}
+      </div>
+      {dragHandle}
     </div>
   }
 })
