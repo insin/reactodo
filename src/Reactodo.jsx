@@ -11,11 +11,11 @@ var $c = require('classNames')
 var extend = require('extend')
 var uuid = require('uuid')
 
-var LOCALSTORAGE_STATE = 'reactodo-state'
+var LOCALSTORAGE_PROP = 'reactodo:'
 
 var Reactodo = React.createClass({
   getInitialState: function() {
-    var stateJSON = localStorage[LOCALSTORAGE_STATE]
+    var stateJSON = localStorage[LOCALSTORAGE_PROP + this.props.session]
     var state = stateJSON ? JSON.parse(stateJSON) : {}
     return extend({
       activeProjectId: null
@@ -26,7 +26,7 @@ var Reactodo = React.createClass({
   }
 
 , componentDidUpdate: function() {
-    localStorage[LOCALSTORAGE_STATE] = JSON.stringify({
+    localStorage[LOCALSTORAGE_PROP + this.props.session] = JSON.stringify({
       activeProjectId: this.state.activeProjectId
     , projects: this.state.projects
     })
@@ -177,7 +177,7 @@ var Reactodo = React.createClass({
     }
 
     return <div>
-      <h1>reactodo</h1>
+      <h1>reactodo <small>{this.props.session}</small></h1>
       <div className="tab-bar">
         <ul className="tabs project-tabs">{tabs}</ul>
         <ul className="tabs app-tabs">

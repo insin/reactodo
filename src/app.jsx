@@ -4,4 +4,7 @@
 
 var Reactodo = require('Reactodo')
 
-React.renderComponent(<Reactodo/>, document.getElementById('reactodo'))
+var sessionMatch = /^\?([\w\s\d]+)/.exec(decodeURIComponent(window.location.search))
+var session = (sessionMatch != null ? sessionMatch[1] : '')
+
+React.renderComponent(<Reactodo session={session}/>, document.getElementById('reactodo'))
