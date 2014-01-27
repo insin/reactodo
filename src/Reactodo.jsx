@@ -3,6 +3,7 @@
 'use strict';
 
 var Constants = require('Constants')
+var Page = require('Page')
 var Project = require('Project')
 var Settings = require('Settings')
 var Welcome = require('Welcome')
@@ -11,25 +12,28 @@ var $c = require('classNames')
 var extend = require('extend')
 var uuid = require('uuid')
 
-var LOCALSTORAGE_PROP = 'reactodo:'
-
 var Reactodo = React.createClass({
   getInitialState: function() {
-    var stateJSON = localStorage[LOCALSTORAGE_PROP + this.props.session]
-    var state = stateJSON ? JSON.parse(stateJSON) : {}
-    return extend({
+    var storedJSON = localStorage[Constants.LOCALSTORAGE_PREFIX + this.props.session]
+    var storedState = storedJSON ? JSON.parse(storedJSON) : {}
+    var initialState =  extend({
       activeProjectId: null
     , editTodoId: null
-    , showingSettings: false
     , projects: []
-    }, state)
+    }, storedState)
+    initialState.page = (initialState.projects.length ? Page.TODO_LISTS : Page.WELCOME)
+    return initialState
   }
 
 , componentDidUpdate: function() {
-    localStorage[LOCALSTORAGE_PROP + this.props.session] = JSON.stringify({
+    localStorage[Constants.LOCALSTORAGE_PREFIX + this.props.session] = JSON.stringify({
       activeProjectId: this.state.activeProjectId
     , projects: this.state.projects
     })
+  }
+
+, setPage: function(page) {
+    this.setState({page: page})
   }
 
 , setActiveProject: function(projectId) {
@@ -134,34 +138,16 @@ var Reactodo = React.createClass({
   }
 
 , render: function() {
-    var tabs = [], content
+    var tabs = []
+    var content
 
-    this.state.projects.forEach(function(project) {
-      if (project.hidden) { return }
-      var isActiveProject = (!this.state.showingSettings &&
-                             this.state.activeProjectId === project.id)
-      tabs.push(<li key={project.id}
-        className={$c({active: isActiveProject})}
-        onClick={!isActiveProject && this.setActiveProject.bind(this, project.id)}>
-        {project.name}
-      </li>)
-      if (isActiveProject) {
-        content = <Project
-                    project={project}
-                    editTodoId={this.state.editTodoId}
-                    onAddTodo={this.addTodo}
-                    onEditTodo={this.editTodo}
-                    onToggleTodo={this.toggleTodo}
-                    onDoTodo={this.doTodo}
-                    onStopDoingTodo={this.stopDoingTodo}
-                    onDeleteTodo={this.deleteTodo}
-                    onDeleteDoneTodos={this.deleteDoneTodos}
-                    onMoveTodo={this.moveTodo}
-                  />
-      }
-    }.bind(this))
-
-    if (this.state.showingSettings) {
+    if (this.state.page === Page.WELCOME) {
+      content = <Welcome
+                  session={this.props.session}
+                  onShowSettings={this.setPage.bind(null, Page.SETTINGS)}
+                />
+    }
+    else if (this.state.page === Page.SETTINGS) {
       content = <Settings
                   projects={this.state.projects}
                   onAddProject={this.addProject}
@@ -172,18 +158,45 @@ var Reactodo = React.createClass({
                   onDeleteProject={this.deleteProject}
                 />
     }
-    else if (this.state.projects.length === 0) {
-      content = <Welcome onShowSettings={this.showSettings}/>
+    else if (this.state.page === Page.TODO_LISTS) {
+      this.state.projects.forEach(function(project) {
+        if (project.hidden) { return }
+        var isActiveProject = (!this.state.showingSettings &&
+                               this.state.activeProjectId === project.id)
+        tabs.push(<li key={project.id}
+          className={$c({active: isActiveProject})}
+          onClick={!isActiveProject && this.setActiveProject.bind(this, project.id)}>
+          {project.name}
+        </li>)
+        if (isActiveProject) {
+          content = <Project
+                      project={project}
+                      editTodoId={this.state.editTodoId}
+                      onAddTodo={this.addTodo}
+                      onEditTodo={this.editTodo}
+                      onToggleTodo={this.toggleTodo}
+                      onDoTodo={this.doTodo}
+                      onStopDoingTodo={this.stopDoingTodo}
+                      onDeleteTodo={this.deleteTodo}
+                      onDeleteDoneTodos={this.deleteDoneTodos}
+                      onMoveTodo={this.moveTodo}
+                    />
+        }
+      }.bind(this))
     }
 
     return <div>
-      <h1>reactodo <small>{this.props.session}</small></h1>
+      <h1>
+        <span className="control" onClick={this.setPage.bind(null, Page.WELCOME)}>reactodo</span>
+        {' '}
+        <small>{this.props.session}</small>
+      </h1>
       <div className="tab-bar">
         <ul className="tabs project-tabs">{tabs}</ul>
         <ul className="tabs app-tabs">
           <li
-            className={$c({active: this.state.showingSettings})}
-            onClick={this.showSettings}
+            className={$c({active: this.state.page === Page.SETTINGS})}
+            onClick={this.setPage.bind(null, Page.SETTINGS)}
             title="Settings"
           >{Constants.SETTINGS}</li>
         </ul>
