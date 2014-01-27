@@ -39,14 +39,8 @@ var Reactodo = React.createClass({
 , setActiveProject: function(projectId) {
     this.setState({
       activeProjectId: projectId
-    , showingSettings: false
+    , page: Page.TODO_LISTS
     })
-  }
-
-, showSettings: function() {
-    if (!this.state.showingSettings) {
-      this.setState({showingSettings: true})
-    }
   }
 
 , addProject: function(projectName) {
@@ -158,32 +152,35 @@ var Reactodo = React.createClass({
                   onDeleteProject={this.deleteProject}
                 />
     }
-    else if (this.state.page === Page.TODO_LISTS) {
-      this.state.projects.forEach(function(project) {
-        if (project.hidden) { return }
-        var isActiveProject = (!this.state.showingSettings &&
-                               this.state.activeProjectId === project.id)
-        tabs.push(<li key={project.id}
-          className={$c({active: isActiveProject})}
-          onClick={!isActiveProject && this.setActiveProject.bind(this, project.id)}>
-          {project.name}
-        </li>)
-        if (isActiveProject) {
-          content = <Project
-                      project={project}
-                      editTodoId={this.state.editTodoId}
-                      onAddTodo={this.addTodo}
-                      onEditTodo={this.editTodo}
-                      onToggleTodo={this.toggleTodo}
-                      onDoTodo={this.doTodo}
-                      onStopDoingTodo={this.stopDoingTodo}
-                      onDeleteTodo={this.deleteTodo}
-                      onDeleteDoneTodos={this.deleteDoneTodos}
-                      onMoveTodo={this.moveTodo}
-                    />
-        }
-      }.bind(this))
-    }
+
+    // Always display project tabs when available
+    this.state.projects.forEach(function(project) {
+      if (project.hidden) { return }
+      var isActiveProject = (this.state.page === Page.TODO_LISTS &&
+                             this.state.activeProjectId === project.id)
+      tabs.push(<li key={project.id}
+        className={$c({active: isActiveProject})}
+        onClick={!isActiveProject && this.setActiveProject.bind(this, project.id)}>
+        {project.name}
+      </li>)
+      if (isActiveProject) {
+        content = <Project
+                    project={project}
+                    editTodoId={this.state.editTodoId}
+                    onAddTodo={this.addTodo}
+                    onEditTodo={this.editTodo}
+                    onToggleTodo={this.toggleTodo}
+                    onDoTodo={this.doTodo}
+                    onStopDoingTodo={this.stopDoingTodo}
+                    onDeleteTodo={this.deleteTodo}
+                    onDeleteDoneTodos={this.deleteDoneTodos}
+                    onMoveTodo={this.moveTodo}
+                  />
+      }
+    }.bind(this))
+
+    // Ensure there's something in tabs so its display isn't collapsed (Chrome)
+    if (!tabs.length) { tabs.push(' ') }
 
     return <div>
       <h1>
