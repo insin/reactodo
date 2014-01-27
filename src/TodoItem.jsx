@@ -35,6 +35,8 @@ var TodoItem = React.createClass({
 
 , handleTextBlur: function() {
     if (this.state.editing) {
+      // Trimming removes a trailing linebreak caused by the extra <br> Firefox
+      // generates in contentEditable innerHTML.
       var newText = trim(this.refs.text.getDOMNode().innerHTML.replace(/<br ?\/?>/g, '\n'))
       this.setState({editing: false})
       if (!newText) {
@@ -101,9 +103,14 @@ var TodoItem = React.createClass({
       <div className="todo-item-toolbar">
         <span className="control" onClick={this.props.onToggle.bind(null, this.props.todo)}>[{this.props.todo.done ? Constants.CHECK : Constants.NBSP}]</span>
       </div>
-      <div className="todo-item-text" ref="text" onClick={this.handleTextClick} onBlur={this.handleTextBlur} contentEditable={this.state.editing}>
-        {this.props.todo.text || ' '}
-      </div>
+      <div
+        className="todo-item-text"
+        ref="text"
+        onClick={this.handleTextClick}
+        onBlur={this.handleTextBlur}
+        contentEditable={this.state.editing}
+        dangerouslySetInnerHTML={{__html: this.props.todo.text || ' '}}
+      />
       {dragHandle}
     </div>
   }
