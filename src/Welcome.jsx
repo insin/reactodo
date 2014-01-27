@@ -27,7 +27,7 @@ var Welcome = React.createClass({
         <p>You are currently using the default session.</p>
         <p>
           If you'd like to switch to a named session which describes your TODOs
-          (e.g. "work projects" or "personal projects"), enter the named you'd
+          (e.g. "work projects" or "personal projects"), enter the name you'd
           like to use below:
         </p>
       </div>
