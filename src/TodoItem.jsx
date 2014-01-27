@@ -5,7 +5,7 @@
 var Constants = require('Constants')
 
 var $c = require('classNames')
-var trim = require('trim')
+var normaliseContentEditableHTML = require('normaliseContentEditableHTML')
 
 var TodoItem = React.createClass({
   getInitialState: function() {
@@ -35,9 +35,7 @@ var TodoItem = React.createClass({
 
 , handleTextBlur: function() {
     if (this.state.editing) {
-      // Trimming removes a trailing linebreak caused by the extra <br> Firefox
-      // generates in contentEditable innerHTML.
-      var newText = trim(this.refs.text.getDOMNode().innerHTML.replace(/<br ?\/?>/g, '\n'))
+      var newText = normaliseContentEditableHTML(this.refs.text.getDOMNode().innerHTML)
       this.setState({editing: false})
       if (!newText) {
         this.props.onDelete(this.props.todo)

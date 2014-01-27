@@ -160,6 +160,11 @@ input[type=text] {
   white-space: pre;
 }
 
+/* Hack for IE contentEditable difference - make p behave like br */
+.todo-item .todo-item-text p {
+  margin: 0;
+}
+
 .todo-item .todo-item-handle {
   display: table-cell;
   text-align: center;
