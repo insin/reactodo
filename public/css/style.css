@@ -122,6 +122,10 @@ input[type=text] {
   margin-right: 12px;
 }
 
+td.project-order, td.project-show {
+  text-align: center;
+}
+
 .todo-item {
   display: table;
   width: 100%;

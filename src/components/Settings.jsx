@@ -111,27 +111,32 @@ var Settings = React.createClass({
       </span>
     }
     else {
-      addProject = <span className="control" onClick={this.addProject} title="Add Project">+</span>
+      addProject = <span className="control" onClick={this.addProject} title="Add a project">+</span>
     }
 
-    var projects = this.props.projects.map(this.renderProject)
+    var projects
+    if (this.props.projects.length) {
+      projects = <div>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Order</th>
+              <th>Show?</th>
+              <th>{Constants.NBSP}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.props.projects.map(this.renderProject)}
+          </tbody>
+        </table>
+        <p>Click on a project's name to edit it.</p>
+      </div>
+    }
 
     return <div className="settings">
       <h2>[PROJECTS] {addProject}</h2>
-      <p>Click on a project name to edit it.</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Order</th>
-            <th>Show?</th>
-            <th>Delete!</th>
-          </tr>
-        </thead>
-        <tbody>
-          {projects}
-        </tbody>
-      </table>
+      {projects}
     </div>
   }
 
@@ -166,8 +171,8 @@ var Settings = React.createClass({
 
     return <tr key={project.id}>
       <td>{projectName}</td>
-      <td>{up}{Constants.NBSP}{down}</td>
-      <td>
+      <td className="project-order">{up}{Constants.NBSP}{down}</td>
+      <td className="project-show">
         <span className="control" onClick={partial(this.toggleProjectVisible, project)}>[{project.hidden ? Constants.NBSP : Constants.CHECK}]</span>
       </td>
       <td>

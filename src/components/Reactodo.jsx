@@ -22,7 +22,10 @@ var Reactodo = React.createClass({
     , editTodoId: null
     , projects: []
     }, storedState)
-    initialState.page = (initialState.projects.length ? Page.TODO_LISTS : Page.WELCOME)
+    initialState.page =
+      (initialState.projects.length && initialState.activeProjectId !== null
+       ? Page.TODO_LISTS
+       : Page.WELCOME)
     return initialState
   }
 
