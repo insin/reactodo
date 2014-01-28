@@ -59,10 +59,14 @@ var Welcome = React.createClass({
       </p>
       <h2>[TIPS]</h2>
       <ul>
-        <li><p>To <strong>add a TODO</strong>, click the <strong>+</strong> control beside a project's <strong>[TODO]</strong> heading.</p></li>
+        <li><p>To <strong>add a TODO</strong>, click the <strong>+</strong> control beside the project's <strong>[TODO]</strong> heading.</p></li>
         <li><p>To <strong>edit a TODO</strong>, click on its text.</p></li>
+        <li><p>To <strong>reorder TODOs</strong>, drag their {Constants.DRAG_HANDLE} handles and drop in the desired location.</p></li>
+        <li><p>When <strong>doing a TODO</strong>, drag and drop it into the project's <strong>[DOING]</strong> section.</p></li>
+        <li><p>To <strong>complete a TODO</strong>, click on its [ ] checkbox.</p></li>
+        <li><p>To <strong>stop doing a TODO</strong>, click the <strong>{Constants.STOP}</strong> control beside the project's <strong>[DOING]</strong> heading.</p></li>
         <li><p>To <strong>delete a single TODO</strong>, delete all of its text.</p></li>
-        <li><p>To <strong>delete completed TODOs</strong>, click the <strong>-</strong> control beside a project's <strong>[DONE]</strong> heading.</p></li>
+        <li><p>To <strong>permanently delete completed TODOs</strong>, click the <strong>-</strong> control beside the project's <strong>[DONE]</strong> heading.</p></li>
       </ul>
     </div>
   }
