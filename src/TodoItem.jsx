@@ -47,7 +47,7 @@ var TodoItem = React.createClass({
   }
 
 , handleDragStart: function(e) {
-    e.nativeEvent.dataTransfer.setData('index', this.props.index)
+    e.nativeEvent.dataTransfer.setData('text', '' + this.props.index)
     this.setState({dragging: true})
   }
 
@@ -56,16 +56,37 @@ var TodoItem = React.createClass({
     this.props.onDragEnd()
   }
 
+  /** Indicates that this TODO is a drop target. */
+, handleDragEnter: function(e) {
+    e.preventDefault()
+  }
+
+  /** Sets the drop effect for this TODO. */
 , handleDragOver: function(e) {
     e.preventDefault()
     e.nativeEvent.dataTransfer.dropEffect = 'move'
     this.props.onDragOver(this.props.todo)
   }
 
+  /** Handles another TODO being dropped on this one. */
 , handleDrop: function(e) {
     e.preventDefault()
-    var fromIndex = e.nativeEvent.dataTransfer.getData('index')
+    var fromIndex = e.nativeEvent.dataTransfer.getData('text')
     this.props.onMoveTodo(fromIndex, this.props.index)
+  }
+
+  /**
+   * IE9 doesn't support draggable="true" on <divs>. This hack manually starts
+   * the drag & drop process onMouseDown. The setTimeout not only bothers me but
+   * doesn't always seem to work - without it, the classes which set style for
+   * the item being dragged and dropzones being dragged over aren't applied.
+   */
+, handleIE9DragHack: function(e) {
+    e.preventDefault()
+    if (window.event.button === 1) {
+      var target = e.nativeEvent.target
+      setTimeout(function() { target.dragDrop() }, 50)
+    }
   }
 
 , render: function() {
@@ -86,6 +107,7 @@ var TodoItem = React.createClass({
           draggable="true"
           onDragStart={this.handleDragStart}
           onDragEnd={this.handleDragEnd}
+          onMouseDown={typeof window.isIE9 != 'undefined' && this.handleIE9DragHack}
         >{Constants.DRAG_HANDLE}</span>
       </div>
     }
@@ -94,8 +116,9 @@ var TodoItem = React.createClass({
     // being displayed.
     return <div
              className={todoItemClassName}
+             onDragEnter={this.handleDragEnter}
              onDragOver={this.handleDragOver}
-             onDragLeave={!this.props.doing && this.props.onCancelDragOver}
+             onDragLeave={!this.props.doing && this.props.onDragLeave}
              onDrop={!this.props.doing && this.handleDrop}
            >
       <div className="todo-item-toolbar">

@@ -25,6 +25,12 @@ var Project = React.createClass({
     }
   }
 
+  /** Indicates that the [DOING] dropzone is a drop target. */
+, handleDragEnterDoing: function(e) {
+    e.preventDefault()
+  }
+
+  /** Sets the drop effect for the [DOING] dropzone. */
 , handleDragOverDoing: function(e) {
     e.preventDefault()
     e.nativeEvent.dataTransfer.dropEffect = 'move'
@@ -36,14 +42,17 @@ var Project = React.createClass({
     }
   }
 
-, cancelDragOverDoing: function(e) {
+  /** Removes the drop effect for the [DOING] dropzone. */
+, handeDragLeaveDoing: function(e) {
     if (this.state.dragoverDoing) {
       this.setState({dragoverDoing: false})
     }
   }
 
+  /** Handles a TODO being dropped on the [DOING] dropzone. */
 , handleDropDoing: function(e) {
-    var index = e.nativeEvent.dataTransfer.getData('index')
+    e.preventDefault()
+    var index = e.nativeEvent.dataTransfer.getData('text')
     if (this.state.dragoverDoing) {
       this.setState({
         dragoverTodoId: null
@@ -79,12 +88,15 @@ var Project = React.createClass({
     }
   }
 
-, onCancelDragOverTodo: function() {
+, onDragLeaveTodo: function() {
     this.setState({dragoverTodoId: null})
   }
 
 , onDragEndTodo: function() {
-    this.setState({dragoverTodoId: null})
+    this.setState({
+      dragoverTodoId: null
+    , dragoverDoing: false
+    })
   }
 
 , onMoveTodo: function(fromIndex, toIndex) {
@@ -107,7 +119,7 @@ var Project = React.createClass({
                        onDo={this.onDoTodo}
                        onDelete={this.onDeleteTodo}
                        onDragOver={this.onDragOverTodo}
-                       onCancelDragOver={this.onCancelDragOverTodo}
+                       onDragLeave={this.onDragLeaveTodo}
                        onDragEnd={this.onDragEndTodo}
                        onMoveTodo={this.onMoveTodo}
                      />
@@ -133,9 +145,10 @@ var Project = React.createClass({
       <h2>[DOING] {stopDoing}</h2>
       <div
         className={$c('dropzone doing-dropzone', {empty: this.props.project.doing === null, dragover: this.state.dragoverDoing})}
+        onDragEnter={this.handleDragEnterDoing}
         onDragOver={this.handleDragOverDoing}
+        onDragLeave={this.handeDragLeaveDoing}
         onDrop={this.handleDropDoing}
-        onDragLeave={this.cancelDragOverDoing}
       >
         {doing || "Drop a TODO here when it's in progress"}
       </div>

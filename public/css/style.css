@@ -174,15 +174,7 @@ input[type=text] {
 }
 
 .handle {
-  cursor: -webkit-grab;
-  cursor: -moz-grab;
-  cursor: grab;
-}
-
-.dragging .handle {
-  cursor: -webkit-grabbing;
-  cursor: -moz-grabbing;
-  cursor: grabbing;
+  cursor: move
 }
 
 .todo-item .todo-item-handle {
