@@ -122,6 +122,9 @@ var Reactodo = React.createClass({
     for (var i = 0, l = project.todos.length; i < l; i++) {
       if (project.todos[i].id === todo.id) {
         project.todos.splice(i, 1)
+        if (project.doing === todo.id) {
+          project.doing = null
+        }
         return this.setState({projects: this.state.projects})
       }
     }
