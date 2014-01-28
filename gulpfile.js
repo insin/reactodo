@@ -3,15 +3,26 @@ var gulp = require('gulp')
 var glob = require('glob')
 
 var browserify = require('gulp-browserify')
+var clean = require('gulp-clean')
 var concat = require('gulp-concat')
 var flatten = require('gulp-flatten')
 var jshint = require('gulp-jshint')
 var plumber = require('gulp-plumber')
 var react = require('gulp-react')
 var rename = require('gulp-rename')
+var runSequence = require('run-sequence')
+var template = require('gulp-template')
 var uglify = require('gulp-uglify')
 
-gulp.task('copy-js', function() {
+var version = require('./package.json').version
+var jsExt = (gulp.env.production ? 'min.js' : 'js')
+
+gulp.task('clean', function() {
+  return gulp.src(['./build', './dist'], {read: false})
+    .pipe(clean())
+})
+
+gulp.task('copy-js-src', function() {
   return gulp.src('./src/**/*.js')
     .pipe(flatten())
     .pipe(gulp.dest('./build/modules'))
@@ -28,14 +39,14 @@ gulp.task('compile-jsx', function() {
     .pipe(gulp.dest('./build/modules'))
 })
 
-gulp.task('lint', ['copy-js', 'compile-jsx'], function() {
+gulp.task('lint', ['copy-js-src', 'compile-jsx'], function() {
   return gulp.src('./build/modules/*.js')
     .pipe(jshint('./.jshintrc'))
     .pipe(jshint.reporter('jshint-stylish'))
 })
 
-gulp.task('browserify', ['lint'], function(){
-  return gulp.src(['./build/modules/app.js'])
+gulp.task('bundle-js', ['lint'], function(){
+  var stream = gulp.src(['./build/modules/app.js'])
     .pipe(browserify({
       debug: !gulp.env.production
     }))
@@ -50,20 +61,52 @@ gulp.task('browserify', ['lint'], function(){
       })
     .pipe(concat('app.js'))
     .pipe(gulp.dest('./build'))
-    .pipe(rename('app.min.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest('./build'))
+
+  if (gulp.env.production) {
+    stream = stream
+      .pipe(rename('app.min.js'))
+      .pipe(uglify())
+      .pipe(gulp.dest('./build'))
+  }
+
+  return stream
 })
 
-gulp.task('update-dev-build', ['browserify'], function() {
-  return gulp.src('./build/app.js')
-    .pipe(gulp.dest('./public/js'))
+gulp.task('dist-js', ['bundle-js'], function() {
+  return gulp.src(['./vendor/react-0.8.0.' + jsExt, './build/app.' + jsExt])
+    .pipe(gulp.dest('./dist/js'))
+})
+
+gulp.task('dist-css', function() {
+  return gulp.src('./public/css/*.css')
+    .pipe(gulp.dest('./dist/css'))
+})
+
+gulp.task('dist-html', function() {
+  return gulp.src('./public/index.html')
+    .pipe(template({
+      version: version
+    , jsExt: jsExt
+    }))
+    .pipe(gulp.dest('./dist'))
+})
+
+gulp.task('clean-build', function() {
+  runSequence('clean', ['dist-js', 'dist-css', 'dist-html'])
 })
 
 gulp.task('default', function() {
-  gulp.run('update-dev-build')
+  gulp.run('clean-build')
 
   gulp.watch(['./src/**/*.js', './src/**/*.jsx'], function() {
-      gulp.run('update-dev-build')
+    gulp.run('dist-js')
+  })
+
+  gulp.watch('./public/css/*.css', function() {
+    gulp.run('dist-css')
+  })
+
+  gulp.watch('./public/index.html', function() {
+    gulp.run('dist-html')
   })
 })
