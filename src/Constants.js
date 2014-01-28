@@ -8,7 +8,7 @@ module.exports = {
 , UP_ARROW: '\u2191'
 , DOWN_ARROW: '\u2193'
 , CHECK: 'X'
-, SETTINGS: '\u2699'
+, SETTINGS: '\u2605'
 , DRAG_HANDLE: '\u2630'
 , STOP: '\u25A0'
 }

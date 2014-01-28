@@ -76,7 +76,7 @@ var TodoItem = React.createClass({
   }
 
   /**
-   * IE9 doesn't support draggable="true" on <divs>. This hack manually starts
+   * IE9 doesn't support draggable="true" on <span>s. This hack manually starts
    * the drag & drop process onMouseDown. The setTimeout not only bothers me but
    * doesn't always seem to work - without it, the classes which set style for
    * the item being dragged and dropzones being dragged over aren't applied.
