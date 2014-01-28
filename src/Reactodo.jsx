@@ -10,6 +10,7 @@ var Welcome = require('Welcome')
 
 var $c = require('classNames')
 var extend = require('extend')
+var partial = require('partial')
 var uuid = require('uuid')
 
 var Reactodo = React.createClass({
@@ -138,7 +139,7 @@ var Reactodo = React.createClass({
     if (this.state.page === Page.WELCOME) {
       content = <Welcome
                   session={this.props.session}
-                  onShowSettings={this.setPage.bind(null, Page.SETTINGS)}
+                  onShowSettings={partial(this.setPage, Page.SETTINGS)}
                 />
     }
     else if (this.state.page === Page.SETTINGS) {
@@ -160,7 +161,7 @@ var Reactodo = React.createClass({
                              this.state.activeProjectId === project.id)
       tabs.push(<li key={project.id}
         className={$c({active: isActiveProject})}
-        onClick={!isActiveProject && this.setActiveProject.bind(this, project.id)}>
+        onClick={!isActiveProject && partial(this.setActiveProject, project.id)}>
         {project.name}
       </li>)
       if (isActiveProject) {
@@ -184,7 +185,7 @@ var Reactodo = React.createClass({
 
     return <div>
       <h1>
-        <span className="control" onClick={this.setPage.bind(null, Page.WELCOME)}>reactodo</span>
+        <span className="control" onClick={partial(this.setPage, Page.WELCOME)}>reactodo</span>
         {' '}
         <small>{this.props.session}</small>
       </h1>
@@ -193,7 +194,7 @@ var Reactodo = React.createClass({
         <ul className="tabs app-tabs">
           <li
             className={$c({active: this.state.page === Page.SETTINGS})}
-            onClick={this.setPage.bind(null, Page.SETTINGS)}
+            onClick={partial(this.setPage, Page.SETTINGS)}
             title="Settings"
           >{Constants.SETTINGS}</li>
         </ul>

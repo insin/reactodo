@@ -6,6 +6,7 @@ var Constants = require('Constants')
 
 var $c = require('classNames')
 var normaliseContentEditableHTML = require('normaliseContentEditableHTML')
+var partial = require('partial')
 
 var TodoItem = React.createClass({
   getInitialState: function() {
@@ -122,7 +123,7 @@ var TodoItem = React.createClass({
              onDrop={!this.props.doing && this.handleDrop}
            >
       <div className="todo-item-toolbar">
-        <span className="control" onClick={this.props.onToggle.bind(null, this.props.todo)}>[{this.props.todo.done ? Constants.CHECK : Constants.NBSP}]</span>
+        <span className="control" onClick={partial(this.props.onToggle, this.props.todo)}>[{this.props.todo.done ? Constants.CHECK : Constants.NBSP}]</span>
       </div>
       <div
         className="todo-item-text"

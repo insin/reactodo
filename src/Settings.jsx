@@ -4,6 +4,7 @@
 
 var Constants = require('Constants')
 
+var partial = require('partial')
 var trim = require('trim')
 
 var Settings = React.createClass({
@@ -138,10 +139,10 @@ var Settings = React.createClass({
     var first = (i === 0)
     var last = (i == projects.length - 1)
     var up = (first ? <span>{Constants.NBSP}</span> :
-      <span className="control" onClick={this.moveProjectUp.bind(null, project, i)}>{Constants.UP_ARROW}</span>
+      <span className="control" onClick={partial(this.moveProjectUp, project, i)}>{Constants.UP_ARROW}</span>
     )
     var down = (last ? <span>{Constants.NBSP}</span> :
-      <span className="control" onClick={this.moveProjectDown.bind(null, project, i)}>{Constants.DOWN_ARROW}</span>
+      <span className="control" onClick={partial(this.moveProjectDown, project, i)}>{Constants.DOWN_ARROW}</span>
     )
     var projectName
     if (this.state.editingProjectName === project.id) {
@@ -151,26 +152,26 @@ var Settings = React.createClass({
           size="15"
           defaultValue={project.name}
           ref="editProjectName"
-          onKeyDown={this.handleEditProjectNameKeyDown.bind(null, project)}
+          onKeyDown={partial(this.handleEditProjectNameKeyDown, project)}
         />
         {' '}
-        <span className="button" onClick={this.editProjectName.bind(null, project)}>Edit</span>
+        <span className="button" onClick={partial(this.editProjectName, project)}>Edit</span>
         {' '}
         <span className="button" onClick={this.cancelEditProjectName}>Cancel</span>
       </span>
     }
     else {
-      projectName = <span className="control" onClick={this.editProjectName.bind(null, project)}>{project.name}</span>
+      projectName = <span className="control" onClick={partial(this.editProjectName, project)}>{project.name}</span>
     }
 
     return <tr key={project.id}>
       <td>{projectName}</td>
       <td>{up}{Constants.NBSP}{down}</td>
       <td>
-        <span className="control" onClick={this.toggleProjectVisible.bind(null, project)}>[{project.hidden ? Constants.NBSP : Constants.CHECK}]</span>
+        <span className="control" onClick={partial(this.toggleProjectVisible, project)}>[{project.hidden ? Constants.NBSP : Constants.CHECK}]</span>
       </td>
       <td>
-        <span className="button" onClick={this.deleteProject.bind(null, project, i)}>Delete</span>
+        <span className="button" onClick={partial(this.deleteProject, project, i)}>Delete</span>
       </td>
     </tr>
   }
