@@ -11,12 +11,17 @@
     "gulp-browserify": "~0.3.3",
     "gulp-concat": "~2.1.7",
     "gulp-flatten": "0.0.2",
+    "gulp-jshint": "~1.3.4",
+    "gulp-plumber": "~0.5.6",
     "gulp-react": "~0.1.1",
     "gulp-rename": "~0.2.2",
     "gulp-uglify": "~0.1.0",
-    "gulp-jshint": "~1.3.4",
     "jshint-stylish": "~0.1.5"
   },
   "author": "Jonathan Buchanan <jonathan.buchanan@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/insin/reactodo.git"
+  },
   "license": "MIT"
 }

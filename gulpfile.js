@@ -6,6 +6,7 @@ var browserify = require('gulp-browserify')
 var concat = require('gulp-concat')
 var flatten = require('gulp-flatten')
 var jshint = require('gulp-jshint')
+var plumber = require('gulp-plumber')
 var react = require('gulp-react')
 var rename = require('gulp-rename')
 var uglify = require('gulp-uglify')
@@ -18,7 +19,11 @@ gulp.task('copy-js', function() {
 
 gulp.task('compile-jsx', function() {
   return gulp.src('./src/**/*.jsx')
+    .pipe(plumber())
     .pipe(react())
+    .on('error', function(e) {
+      console.error(e.message + '\n  in ' + e.fileName)
+    })
     .pipe(flatten())
     .pipe(gulp.dest('./build/modules'))
 })
