@@ -72,7 +72,22 @@ var Reactodo = React.createClass({
 
 , deleteProject: function(project, index) {
     this.state.projects.splice(index, 1)
-    this.setState({projects: this.state.projects})
+    var activeProjectId = this.state.activeProjectId
+    if (this.state.projects.length === 0) {
+      activeProjectId = null
+    }
+    else if (activeProjectId === project.id) {
+      if (index <= this.state.projects.length - 1) {
+        activeProjectId = this.state.projects[index].id
+      }
+      else {
+        activeProjectId = this.state.projects[index - 1].id
+      }
+    }
+    this.setState({
+      activeProjectId: activeProjectId
+    , projects: this.state.projects
+    })
   }
 
 , addTodo: function(project) {
