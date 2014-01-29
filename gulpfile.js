@@ -10,12 +10,12 @@ var jshint = require('gulp-jshint')
 var plumber = require('gulp-plumber')
 var react = require('gulp-react')
 var rename = require('gulp-rename')
-var runSequence = require('run-sequence')
 var template = require('gulp-template')
 var uglify = require('gulp-uglify')
+var gutil = require('gulp-util')
 
 var version = require('./package.json').version
-var jsExt = (gulp.env.production ? 'min.js' : 'js')
+var jsExt = (gutil.env.production ? 'min.js' : 'js')
 
 gulp.task('clean', function() {
   return gulp.src(['./build', './dist'], {read: false})
@@ -47,8 +47,9 @@ gulp.task('lint', ['copy-js-src', 'compile-jsx'], function() {
 
 gulp.task('bundle-js', ['lint'], function(){
   var stream = gulp.src(['./build/modules/app.js'])
+    .pipe(plumber())
     .pipe(browserify({
-      debug: !gulp.env.production
+      debug: !gutil.env.production
     }))
     .on('prebundle', function(bundle) {
         // Setting cwd as gulp-browserify is forcing browserify's basedir to be
@@ -59,10 +60,13 @@ gulp.task('bundle-js', ['lint'], function(){
           bundle.require('./' + module, {expose: expose})
         })
       })
+    .on('error', function(e) {
+      console.error(e)
+    })
     .pipe(concat('app.js'))
     .pipe(gulp.dest('./build'))
 
-  if (gulp.env.production) {
+  if (gutil.env.production) {
     stream = stream
       .pipe(rename('app.min.js'))
       .pipe(uglify())
@@ -91,22 +95,12 @@ gulp.task('dist-html', function() {
     .pipe(gulp.dest('./dist'))
 })
 
-gulp.task('clean-build', function() {
-  runSequence('clean', ['dist-js', 'dist-css', 'dist-html'])
+gulp.task('watch', function() {
+  gulp.watch(['./src/**/*.js', './src/**/*.jsx'], ['dist-js'])
+  gulp.watch('./public/css/*.css', ['dist-css'])
+  gulp.watch('./public/index.html', ['dist-html'])
 })
 
-gulp.task('default', function() {
-  gulp.run('clean-build')
-
-  gulp.watch(['./src/**/*.js', './src/**/*.jsx'], function() {
-    gulp.run('dist-js')
-  })
-
-  gulp.watch('./public/css/*.css', function() {
-    gulp.run('dist-css')
-  })
-
-  gulp.watch('./public/index.html', function() {
-    gulp.run('dist-html')
-  })
+gulp.task('default', ['clean'], function() {
+  gulp.start('dist-js', 'dist-css', 'dist-html', 'watch')
 })
