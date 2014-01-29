@@ -164,6 +164,11 @@ td.project-order, td.project-show {
   white-space: pre;
 }
 
+.todo-item .todo-item-text {
+  display: table-cell;
+  height: 100%;
+}
+
 /* Hack for IE contentEditable difference - make p behave like br */
 .todo-item .todo-item-text p {
   margin: 0;
@@ -177,10 +182,6 @@ td.project-order, td.project-show {
   padding: 0 6px 0 12px;
 }
 
-.handle {
-  cursor: move
-}
-
 .todo-item .todo-item-handle {
   visibility: hidden;
 }
@@ -189,10 +190,8 @@ td.project-order, td.project-show {
   visibility: visible;
 }
 
-.todo-item .todo-item-text {
-  display: table-cell;
-  height: 100%;
-  white-space: pre;
+.handle {
+  cursor: move
 }
 
 .control {

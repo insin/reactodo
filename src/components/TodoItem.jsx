@@ -131,7 +131,7 @@ var TodoItem = React.createClass({
         onClick={this.handleTextClick}
         onBlur={this.handleTextBlur}
         contentEditable={this.state.editing}
-        dangerouslySetInnerHTML={{__html: this.props.todo.text || ' '}}
+        dangerouslySetInnerHTML={{__html: this.props.todo.text || '&nbsp;'}}
       />
       {dragHandle}
     </div>
