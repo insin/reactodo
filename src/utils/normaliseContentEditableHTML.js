@@ -4,7 +4,7 @@
 var trimWhitespace = /^(?:\s|&nbsp;|<br>|<p>(?:\s|&nbsp;|<br>)*<\/p>)*|(?:\s|&nbsp;|<br>|<p>(?:\s|&nbsp;|<br>)*<\/p>)*$/g
 
 // Opening and closing <span>s
-var ieSpans = /<\/?span[^>]*>/g
+var spans = /<\/?span[^>]*>/g
 
 // Leading and trailing <br> withing first and last <p>
 var ieLeadingBrs = /^<p>(?:<br>)+/
@@ -16,10 +16,11 @@ var ieTrailingBrs = /(?:<br>)+<\/p>$/
  * order to avoid using whitespace: pre so that long lines will wrap.
  */
 function normaliseContentEditableHTML(html) {
+  // Remove spans carrying any copy & pasted style
+  html = html.replace(spans, '')
+
   if (typeof window.isIE9 != 'undefined') {
     html = html
-      // Strip out spans which hold styling carried over from copy & pasting
-      .replace(ieSpans, '')
       // Leading <br>s within first <p>
       .replace(ieLeadingBrs, '<p>')
       // Trailing <br>s within last <p>
