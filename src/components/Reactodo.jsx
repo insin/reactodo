@@ -29,6 +29,12 @@ var Reactodo = React.createClass({
     return initialState
   }
 
+, componentDidMount: function() {
+    if (this.props.session) {
+      document.title = this.props.session + ' - ' + document.title
+    }
+  }
+
 , componentDidUpdate: function() {
     localStorage[Constants.LOCALSTORAGE_PREFIX + this.props.session] = JSON.stringify({
       activeProjectId: this.state.activeProjectId
