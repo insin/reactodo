@@ -19,7 +19,8 @@ var Settings = React.createClass({
     if (this.state.addingProject && !prevState.addingProject) {
       this.refs.projectName.getDOMNode().focus()
     }
-    if (this.state.editingProjectName && !prevState.editingProjectName) {
+    else if (this.state.editingProjectName &&
+             this.state.editingProjectName !== prevState.editingProjectName) {
       this.refs.editProjectName.getDOMNode().focus()
     }
   }
@@ -42,7 +43,7 @@ var Settings = React.createClass({
   }
 
 , editProjectName: function(project) {
-    if (this.state.editingProjectName === null) {
+    if (this.state.editingProjectName !== project.id) {
       this.setState({editingProjectName: project.id})
     }
     else {
