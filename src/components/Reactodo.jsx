@@ -42,6 +42,12 @@ var Reactodo = React.createClass({
     })
   }
 
+, getSessions: function() {
+    return Object.keys(localStorage)
+      .filter(function(p) { return p.indexOf(Constants.LOCALSTORAGE_PREFIX) === 0 })
+      .map(function(p) { return p.substring(Constants.LOCALSTORAGE_PREFIX.length) })
+  }
+
 , setPage: function(page) {
     this.setState({page: page})
   }
@@ -166,6 +172,7 @@ var Reactodo = React.createClass({
     if (this.state.page === Page.WELCOME) {
       content = <Welcome
                   session={this.props.session}
+                  getSessions={this.getSessions}
                   onShowSettings={partial(this.setPage, Page.SETTINGS)}
                 />
     }

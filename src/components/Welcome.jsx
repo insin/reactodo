@@ -45,6 +45,10 @@ var Welcome = React.createClass({
       </div>
     }
 
+    var datalistOptions = this.props.getSessions().map(function(session) {
+      return <option value={session}/>
+    })
+
     return <div>
       <h2>[WELCOME]</h2>
       <p>Reactodo is a TODO app with 3 fixed categories - DOING, TODO and DONE - and multiple TODO lists, or projects.</p>
@@ -56,7 +60,8 @@ var Welcome = React.createClass({
       <p>Reactodo allows you to have multiple, independent sessions with their own TODO lists.</p>
       {currentSession}
       <p>
-        <input type="text" ref="sessionName" onKeyDown={this.onSessionNameKeyDown}/>{' '}
+        <datalist id="existingSessions">{datalistOptions}</datalist>
+        <input type="text" ref="sessionName" list="existingSessions" onKeyDown={this.onSessionNameKeyDown}/>{' '}
         <span className="button" onClick={this.switchSession}>Switch</span>
       </p>
       <h2>[TIPS]</h2>
