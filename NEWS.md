@@ -10,9 +10,9 @@
   save.
 
 * **Backwards-incompatible change** &ndash; linebreaks are now stored as `<br>`
-  rather than `\n` - long lines will now wrap.
+  rather than `\n` &ndash; long lines will now wrap.
 
-0.1.0 &ndash; 2014-01/28
+0.1.0 &ndash; 2014-01-28
 ------------------------
 
 * Initial release.
