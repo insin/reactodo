@@ -1,6 +1,8 @@
 0.2.0 (in development)
 ----------------------
 
+* Leading and trailing whitespace trimming is now more&hellip; aggressive.
+
 * Session switcher `<input>` now uses a `<datalist>` to suggest completions for
   existing session names from `localStorage`.
 

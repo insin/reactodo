@@ -36,13 +36,18 @@ var TodoItem = React.createClass({
 
 , handleTextBlur: function() {
     if (this.state.editing) {
-      var newText = normaliseContentEditableHTML(this.refs.text.getDOMNode().innerHTML)
+      var edit = normaliseContentEditableHTML(this.refs.text.getDOMNode().innerHTML)
+      // HACK - Forces trimming to take effect - this isn't being done by React
+      //        for some reason.
+      if (edit.isTrimmed) {
+        this.refs.text.getDOMNode().innerHTML = edit.text
+      }
       this.setState({editing: false})
-      if (!newText) {
+      if (!edit.text) {
         this.props.onDelete(this.props.todo)
       }
       else {
-        this.props.onEdit(this.props.todo, newText)
+        this.props.onEdit(this.props.todo, edit.text)
       }
     }
   }

@@ -6,9 +6,9 @@ var trimWhitespace = /^(?:\s|&nbsp;|<br>|<p>(?:\s|&nbsp;|<br>)*<\/p>)*|(?:\s|&nb
 // Opening and closing <span>s
 var spans = /<\/?span[^>]*>/g
 
-// Leading and trailing <br> withing first and last <p>
-var ieLeadingBrs = /^<p>(?:<br>)+/
-var ieTrailingBrs = /(?:<br>)+<\/p>$/
+// Leading and trailing <br> withing first and last non-empty <p>
+var ieLeadingBrs = /^(?:<p>(?:\s|&nbsp;|<br>)*<\/p>)*<p>(?:\s|&nbsp;|<br>)+/
+var ieTrailingBrs = /(?:\s|&nbsp;|<br>)+<\/p>(?:<p>(?:\s|&nbsp;|<br>)*<\/p>)*$/
 
 /**
  * Normalises contentEditable innerHTML to a degree, cross-browser. We retain
@@ -18,6 +18,9 @@ var ieTrailingBrs = /(?:<br>)+<\/p>$/
 function normaliseContentEditableHTML(html) {
   // Remove spans carrying any copy & pasted style
   html = html.replace(spans, '')
+
+  // Length pre-trimming of anything which causes whitespace
+  var originalLength = html.length
 
   if (typeof window.isIE9 != 'undefined') {
     html = html
@@ -30,7 +33,10 @@ function normaliseContentEditableHTML(html) {
   // Trimming also removes a trailing <br> Firefox always generates at the end
   html = html.replace(trimWhitespace, '')
 
-  return html
+  return {
+    text: html
+  , isTrimmed: originalLength !== html.length
+  }
 }
 
 module.exports = normaliseContentEditableHTML
