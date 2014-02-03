@@ -52,7 +52,7 @@ var Project = React.createClass({
   /** Handles a TODO being dropped on the [DOING] dropzone. */
 , handleDropDoing: function(e) {
     e.preventDefault()
-    var index = e.nativeEvent.dataTransfer.getData('text')
+    var index = Number(e.nativeEvent.dataTransfer.getData('text'))
     if (this.state.dragoverDoing) {
       this.setState({
         dragoverTodoId: null

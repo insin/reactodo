@@ -123,6 +123,11 @@ var Reactodo = React.createClass({
   }
 
 , moveTodo: function(project, fromIndex, toIndex) {
+    var fromTodo = project.todos[fromIndex]
+      , toTodo = project.todos[toIndex]
+    if (fromTodo.done !== toTodo.done) {
+      fromTodo.done = toTodo.done
+    }
     project.todos.splice(toIndex, 0, project.todos.splice(fromIndex, 1)[0])
     this.setState({projects: this.state.projects})
   }
