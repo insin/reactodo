@@ -3,9 +3,9 @@
 'use strict';
 
 var Constants = require('Constants')
+var EditInput = require('EditInput')
 
 var partial = require('partial')
-var trim = require('trim')
 
 var Settings = React.createClass({
   getInitialState: function() {
@@ -15,26 +15,13 @@ var Settings = React.createClass({
     }
   }
 
-, componentDidUpdate: function(prevProps, prevState) {
-    if (this.state.addingProject && !prevState.addingProject) {
-      this.refs.projectName.getDOMNode().focus()
-    }
-    else if (this.state.editingProjectName &&
-             this.state.editingProjectName !== prevState.editingProjectName) {
-      this.refs.editProjectName.getDOMNode().focus()
-    }
-  }
-
-, addProject: function() {
+, addProject: function(projectName) {
     if (!this.state.addingProject) {
       this.setState({addingProject: true})
     }
     else {
-      var projectName = trim(this.refs.projectName.getDOMNode().value)
-      if (projectName) {
-        this.setState({addingProject: false})
-        this.props.onAddProject(projectName)
-      }
+      this.setState({addingProject: false})
+      this.props.onAddProject(projectName)
     }
   }
 
@@ -42,16 +29,13 @@ var Settings = React.createClass({
     this.setState({addingProject: false})
   }
 
-, editProjectName: function(project) {
+, editProjectName: function(project, projectName) {
     if (this.state.editingProjectName !== project.id) {
       this.setState({editingProjectName: project.id})
     }
     else {
-      var projectName = trim(this.refs.editProjectName.getDOMNode().value)
-      if (projectName) {
-        this.setState({editingProjectName: null})
-        this.props.onEditProjectName(project, projectName)
-      }
+      this.setState({editingProjectName: null})
+      this.props.onEditProjectName(project, projectName)
     }
   }
 
@@ -98,18 +82,11 @@ var Settings = React.createClass({
 , render: function() {
     var addProject
     if (this.state.addingProject) {
-      addProject = <span>
-        <input
-          type="text"
-          size="15"
-          ref="projectName"
-          onKeyDown={this.handleAddProjectKeyDown}
-        />
-        {' '}
-        <span className="button" onClick={this.addProject}>Add</span>
-        {' '}
-        <span className="button" onClick={this.cancelAddProject}>Cancel</span>
-      </span>
+      addProject = <EditInput
+                     button="Add"
+                     onSubmit={this.addProject}
+                     onCancel={this.cancelAddProject}
+                   />
     }
     else {
       addProject = <span className="control" onClick={this.addProject} title="Add a project">+</span>
@@ -152,19 +129,12 @@ var Settings = React.createClass({
     )
     var projectName
     if (this.state.editingProjectName === project.id) {
-      projectName = <span>
-        <input
-          type="text"
-          size="15"
-          defaultValue={project.name}
-          ref="editProjectName"
-          onKeyDown={partial(this.handleEditProjectNameKeyDown, project)}
-        />
-        {' '}
-        <span className="button" onClick={partial(this.editProjectName, project)}>Edit</span>
-        {' '}
-        <span className="button" onClick={this.cancelEditProjectName}>Cancel</span>
-      </span>
+      projectName = <EditInput
+                      defaultValue={project.name}
+                      button="Edit"
+                      onSubmit={partial(this.editProjectName, project)}
+                      onCancel={this.cancelEditProjectName}
+                    />
     }
     else {
       projectName = <span className="control" onClick={partial(this.editProjectName, project)}>{project.name}</span>
