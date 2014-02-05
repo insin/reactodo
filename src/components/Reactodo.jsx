@@ -15,43 +15,121 @@ var uuid = require('uuid')
 
 var Reactodo = React.createClass({
   getInitialState: function() {
-    var storedJSON = localStorage[Constants.LOCALSTORAGE_PREFIX + this.props.session]
+    return this.getStateForSession(this.props.session)
+  }
+
+  /**
+   * Gets state for the named session, loading from localStorage if available.
+   */
+, getStateForSession: function(session) {
+    var storedJSON = localStorage[Constants.LOCALSTORAGE_PREFIX + session]
     var storedState = storedJSON ? JSON.parse(storedJSON) : {}
-    var initialState =  extend({
+    var state =  extend({
       activeProjectId: null
     , editTodoId: null
     , projects: []
     }, storedState)
-    initialState.page =
-      (initialState.projects.length && initialState.activeProjectId !== null
+    state.page =
+      (state.projects.length && state.activeProjectId !== null
        ? Page.TODO_LISTS
        : Page.WELCOME)
-    return initialState
+    return state
   }
 
 , componentDidMount: function() {
-    if (this.props.session) {
-      document.title = this.props.session + ' - ' + document.title
+    this.updateWindowTitle()
+  }
+
+  /**
+   * Reloads state if the session name has changed.
+   */
+, componentWillReceiveProps: function(nextProps) {
+    if (this.props.session !== nextProps.session) {
+      var sessionState = this.getStateForSession(nextProps.session)
+      if (nextProps.keepPage) {
+        sessionState.page = this.state.page
+      }
+      this.setState(sessionState)
     }
   }
 
-, componentDidUpdate: function() {
+  /**
+   * Stores session state when there's been a state change. Ensures the window
+   * title is updated if the session changed as part of the update.
+   */
+, componentDidUpdate: function(prevProps, prevState) {
+    if (prevProps.session !== this.props.session) {
+      this.updateWindowTitle()
+    }
     localStorage[Constants.LOCALSTORAGE_PREFIX + this.props.session] = JSON.stringify({
       activeProjectId: this.state.activeProjectId
     , projects: this.state.projects
     })
   }
 
+, updateWindowTitle: function() {
+    if (this.props.session) {
+      document.title = this.props.session + ' - reactodo'
+    }
+    else {
+      document.title = 'reactodo'
+    }
+  }
+
+  /**
+   * Switches to another named session on the fly. If a keepPage option is
+   * passed and is truthy, the current page state will be retained.
+   */
+, switchSession: function(session, options) {
+    options = extend({keepPage: false}, options)
+    if (typeof history !== 'undefined' && history.replaceState) {
+      history.replaceState(session, session + ' - reactodo', '?' + encodeURIComponent(session))
+    }
+    this.setProps({session: session, keepPage: options.keepPage})
+  }
+
+  /**
+   * Determines session names present in localStorage.
+   */
 , getSessions: function() {
     return Object.keys(localStorage)
       .filter(function(p) { return p.indexOf(Constants.LOCALSTORAGE_PREFIX) === 0 })
       .map(function(p) { return p.substring(Constants.LOCALSTORAGE_PREFIX.length) })
   }
 
+  /** Adds a new session without switching to it. */
+, addSession: function(sessionName) {
+    localStorage[Constants.LOCALSTORAGE_PREFIX + sessionName] = JSON.stringify({
+      activeProjectId: null
+    , projects: []
+    })
+  }
+
+  /**
+   * Copies session state from one name to another and deletes the original. If
+   * the original was the active session, switches to it.
+   */
+, editSessionName: function(session, newName) {
+    localStorage[Constants.LOCALSTORAGE_PREFIX + newName] =
+      localStorage[Constants.LOCALSTORAGE_PREFIX + session]
+    this.deleteSession(session)
+    if (this.props.session === session) {
+      this.switchSession(newName, {keepPage: true})
+    }
+  }
+
+, deleteSession: function(sessionName) {
+    delete localStorage[Constants.LOCALSTORAGE_PREFIX + sessionName]
+  }
+
 , setPage: function(page) {
     this.setState({page: page})
   }
 
+  /**
+   * Sets the given project id as active and switches to displaying its TODOs if
+   * currently on another screen.
+   */
 , setActiveProject: function(projectId) {
     this.setState({
       activeProjectId: projectId
@@ -85,6 +163,10 @@ var Reactodo = React.createClass({
     this.setState({projects: this.state.projects})
   }
 
+  /**
+   * Deletes a project and sets the next adjacent project as active if there are
+   * any.
+   */
 , deleteProject: function(project, index) {
     this.state.projects.splice(index, 1)
     var activeProjectId = this.state.activeProjectId
@@ -178,18 +260,25 @@ var Reactodo = React.createClass({
       content = <Welcome
                   session={this.props.session}
                   getSessions={this.getSessions}
+                  onSwitchSession={this.switchSession}
                   onShowSettings={partial(this.setPage, Page.SETTINGS)}
                 />
     }
     else if (this.state.page === Page.SETTINGS) {
       content = <Settings
                   projects={this.state.projects}
+                  session={this.props.session}
+                  getSessions={this.getSessions}
+                  onSwitchSession={this.switchSession}
                   onAddProject={this.addProject}
+                  onAddSession={this.addSession}
                   onEditProjectName={this.editProjectName}
+                  onEditSessionName={this.editSessionName}
                   onMoveProjectUp={this.moveProjectUp}
                   onMoveProjectDown={this.moveProjectDown}
                   onToggleProjectVisible={this.toggleProjectVisible}
                   onDeleteProject={this.deleteProject}
+                  onDeleteSession={this.deleteSession}
                 />
     }
 

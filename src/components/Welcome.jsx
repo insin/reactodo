@@ -10,7 +10,7 @@ var Welcome = React.createClass({
   switchSession: function() {
     var sessionName = trim(this.refs.sessionName.getDOMNode().value)
     if (sessionName) {
-      window.location.search = sessionName
+      this.props.onSwitchSession(sessionName)
     }
   }
 

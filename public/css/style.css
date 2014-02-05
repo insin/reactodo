@@ -122,7 +122,7 @@ input[type=text] {
   margin-right: 12px;
 }
 
-td.project-order, td.project-show {
+td.project-order, td.project-show, td.session-current {
   text-align: center;
 }
 
