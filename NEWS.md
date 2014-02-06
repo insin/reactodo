@@ -12,7 +12,7 @@
 * Session switcher `<input>` now uses a `<datalist>` to suggest completions for
   existing session names from `localStorage`.
 
-* Fixed: clicking to edit one projct name then another no longer copies the
+* Fixed: clicking to edit one project name then another no longer copies the
   former's name to the latter.
 
 * The active session name is now displayed in `<title>`.
