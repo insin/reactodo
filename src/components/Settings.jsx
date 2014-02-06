@@ -5,6 +5,8 @@
 var Constants = require('Constants')
 var EditInput = require('EditInput')
 
+var exportProject = require('exportProject')
+var exportTextFile = require('exportTextFile')
 var partial = require('partial')
 
 var Settings = React.createClass({
@@ -103,6 +105,10 @@ var Settings = React.createClass({
     this.props.onToggleProjectVisible(project)
   }
 
+, exportProject: function(project) {
+    exportTextFile(exportProject(project), project.name + '.todo.txt')
+  }
+
 , render: function() {
     var addProject
     if (this.state.addingProject) {
@@ -125,6 +131,7 @@ var Settings = React.createClass({
               <th>Name</th>
               <th>Order</th>
               <th>Show?</th>
+              <th>{Constants.NBSP}</th>
               <th>{Constants.NBSP}</th>
             </tr>
           </thead>
@@ -162,7 +169,7 @@ var Settings = React.createClass({
           {this.props.getSessions().map(this.renderSession)}
         </tbody>
       </table>
-      <p>Click on a session's name to switch to it.</p>
+      <p>Click on a session's name to edit it.</p>
     </div>
 
     return <div className="settings">
@@ -208,6 +215,9 @@ var Settings = React.createClass({
         <span className="control" onClick={partial(this.props.onToggleProjectVisible, project)}>
           [{project.hidden ? Constants.NBSP : Constants.CHECK}]
         </span>
+      </td>
+      <td>
+        <span className="button" onClick={partial(this.exportProject, project)}>Export</span>
       </td>
       <td>
         <span className="button" onClick={partial(this.deleteProject, project, i)}>Delete</span>

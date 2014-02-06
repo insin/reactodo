@@ -1,6 +1,8 @@
 0.2.0 (in development)
 ----------------------
 
+* Added exporting of projects as a `.todo.txt` file.
+
 * Added session management to the settings screen.
 
 * Sessions can now be switched on the fly without reloading the page.
