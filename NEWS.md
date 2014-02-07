@@ -1,5 +1,5 @@
-0.2.0 (in development)
-----------------------
+0.2.0 &ndash; 2014-02-07
+------------------------
 
 * **Backwards-incompatible change** &ndash; linebreaks are now stored as `<br>`
   rather than `\n` &ndash; long lines will now wrap.
