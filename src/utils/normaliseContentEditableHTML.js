@@ -9,9 +9,9 @@ var newlines = /\n/g
 var trimWhitespace = /^(?:\s|&nbsp;|<br[^>]*>)*|(?:\s|&nbsp;|<br[^>]*>)*$/g
 
 /**
- * Normalises contentEditable innerHTML, stripping all tags except <br> and trim
- * leading and trailing whitespace and elements which cause whitespace.
- * The resulting normalisd HTML uses <br> for line breaks.
+ * Normalises contentEditable innerHTML, stripping all tags except <br> and
+ * trimming leading and trailing whitespace. The resulting normalised HTML uses
+ * <br> for line breaks.
  */
 function normaliseContentEditableHTML(html) {
   html = html.replace(openBreaks, '')
