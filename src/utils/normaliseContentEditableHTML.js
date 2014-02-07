@@ -1,41 +1,26 @@
 'use strict';
 
-// Leading and trailing whitespace, <br>s, &nbsp;s and empty <p>s
-var trimWhitespace = /^(?:\s|&nbsp;|<br>|<p>(?:\s|&nbsp;|<br>)*<\/p>)*|(?:\s|&nbsp;|<br>|<p>(?:\s|&nbsp;|<br>)*<\/p>)*$/g
+var openBreaks = /<p[^>]*>|<div[^>]*>/g
+var breaks = /<br[^>]*>|<\/p>|<\/div>/g
+var allTags = /<\/?[^>]+>\s*/g
+var newlines = /\n/g
 
-// Opening and closing <span>s
-var spans = /<\/?span[^>]*>/g
-
-// Leading and trailing whitespace within first and last non-empty <p>
-var ieLeadingWS = /^(?:<p>(?:\s|&nbsp;|<br>)*<\/p>)*<p>(?:\s|&nbsp;|<br>)+/
-var ieTrailingWS = /(?:\s|&nbsp;|<br>)+<\/p>(?:<p>(?:\s|&nbsp;|<br>)*<\/p>)*$/
+// Leading and trailing whitespace, <br>s, &nbsp;s
+var trimWhitespace = /^(?:\s|&nbsp;|<br[^>]*>)*|(?:\s|&nbsp;|<br[^>]*>)*$/g
 
 /**
- * Normalises contentEditable innerHTML to a degree and trims leading and
- * trailing whitespace. We retain <br>s and <p>s inserted when editing a
- * contentEditable for line-breaking in order to avoid using whitespace: pre, so
- * long lines will wrap.
+ * Normalises contentEditable innerHTML, stripping all tags except <br> and trim
+ * leading and trailing whitespace and elements which cause whitespace.
+ * The resulting normalisd HTML uses <br> for line breaks.
  */
 function normaliseContentEditableHTML(html) {
-  // Remove spans carrying any copy & pasted style
-  html = html.replace(spans, '')
+  html = html.replace(openBreaks, '')
+             .replace(breaks, '\n')
+             .replace(allTags, '')
+             .replace(newlines, '<br>')
+             .replace(trimWhitespace, '')
 
-  // Length pre-trimming of anything which causes whitespace
-  var originalLength = html.length
-
-  if (typeof window.isIE9 != 'undefined') {
-    html = html
-      .replace(ieLeadingWS, '<p>')
-      .replace(ieTrailingWS, '</p>')
-  }
-
-  // Trimming also removes a trailing <br> Firefox always generates at the end
-  html = html.replace(trimWhitespace, '')
-
-  return {
-    text: html
-  , isTrimmed: originalLength !== html.length
-  }
+  return html
 }
 
 module.exports = normaliseContentEditableHTML

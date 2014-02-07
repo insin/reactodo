@@ -19,22 +19,18 @@ function exportProject(project) {
   return doing.concat(todos).concat(dones).join('\n\n')
 }
 
-var openP = /<p>/g
+var breaks = /<br>/g
 var spaces = /&nbsp;/g
-var breaks = /<br[^>]*>|<\/p>/g
 var newlines = /\n/g
-var allTags = /<\/?[^>]+>\s*/g
 var lt = /&lt;/g
 var gt = /&gt;/g
 var amp = /&amp;/g
 
 function exportTODO(todo) {
   var checkbox = '[' + (todo.done ? Constants.CHECK : ' ') + '] '
-  var text = todo.text.replace(openP, '')
+  var text = todo.text.replace(breaks, '\n')
                       .replace(spaces, ' ')
-                      .replace(breaks, '\n')
                       .replace(newlines, '\n    ')
-                      .replace(allTags, '')
                       .replace(lt, '<')
                       .replace(gt, '>')
                       .replace(amp, '&')
