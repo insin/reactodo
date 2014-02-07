@@ -28,6 +28,7 @@ var Reactodo = React.createClass({
       activeProjectId: null
     , editTodoId: null
     , projects: []
+    , showingSessionMenu: false
     }, storedState)
     state.page =
       (state.projects.length && state.activeProjectId !== null
@@ -47,7 +48,14 @@ var Reactodo = React.createClass({
     if (this.props.session !== nextProps.session) {
       var sessionState = this.getStateForSession(nextProps.session)
       if (nextProps.keepPage) {
-        sessionState.page = this.state.page
+        // If the new session doesn't have any TODO lists, don't send it to the
+        // TODO lists page, or the user will get an empty screen. If the new
+        // session does have TODO lists and we're on the Welcome page, don't
+        // stay on the Welcome page.
+        if (!(sessionState.page === Page.WELCOME && this.state.page === Page.TODO_LISTS) &&
+            !(sessionState.page === Page.TODO_LISTS && this.state.page === Page.WELCOME)) {
+          sessionState.page = this.state.page
+        }
       }
       this.setState(sessionState)
     }
@@ -103,6 +111,7 @@ var Reactodo = React.createClass({
       activeProjectId: null
     , projects: []
     })
+    this.forceUpdate()
   }
 
   /**
@@ -120,6 +129,7 @@ var Reactodo = React.createClass({
 
 , deleteSession: function(sessionName) {
     delete localStorage[Constants.LOCALSTORAGE_PREFIX + sessionName]
+    this.forceUpdate()
   }
 
 , setPage: function(page) {
@@ -252,6 +262,21 @@ var Reactodo = React.createClass({
     this.setState({projects: this.state.projects})
   }
 
+, showSessionMenu: function() {
+    this.setState({showingSessionMenu: true})
+  }
+
+, pickSession: function(session, e) {
+    e.preventDefault()
+    e.stopPropagation()
+    this.hideSessionMenu()
+    this.switchSession(session, {keepPage: true})
+  }
+
+, hideSessionMenu: function() {
+    this.setState({showingSessionMenu: false})
+  }
+
 , render: function() {
     var tabs = []
     var content
@@ -311,11 +336,42 @@ var Reactodo = React.createClass({
     // Ensure there's something in tabs so its display isn't collapsed (Chrome)
     if (!tabs.length) { tabs.push(' ') }
 
-    return <div>
+    var sessions = this.getSessions()
+    var multipleSessions = sessions.length > 1
+    var activeSession
+    var sessionMenu
+    if (!this.state.showingSessionMenu) {
+      var sessionName = this.props.session
+      if (multipleSessions) {
+        sessionName += ' ' + Constants.TRIANGLE_DOWN
+      }
+      activeSession = <span className={$c({control: multipleSessions})} onClick={multipleSessions && this.showSessionMenu}>
+        {sessionName}
+      </span>
+    }
+    else {
+      activeSession = <span className="control" onClick={this.hideSessionMenu}>
+        {this.props.session + ' ' + Constants.TRIANGLE_UP}
+      </span>
+
+      sessions.sort()
+      sessions.splice(sessions.indexOf(this.props.session), 1)
+
+      var menuItems = sessions.map(function(session, index) {
+        var sessionName = session || '(Default)'
+        return <div className="menu-item" onClick={partial(this.pickSession, session)}>
+          {sessionName}
+        </div>
+      }.bind(this))
+
+      sessionMenu = <div className="menu">{menuItems}</div>
+    }
+
+    return <div onClick={this.state.showingSessionMenu && this.hideSessionMenu}>
       <h1>
         <span className="control" onClick={partial(this.setPage, Page.WELCOME)}>reactodo</span>
         {' '}
-        <small>{this.props.session}</small>
+        <small className="menu-container">{activeSession}{sessionMenu}</small>
       </h1>
       <div className="tab-bar">
         <ul className="tabs project-tabs">{tabs}</ul>

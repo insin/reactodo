@@ -11,4 +11,6 @@ module.exports = {
 , SETTINGS: '\u2605'
 , DRAG_HANDLE: '\u2630'
 , STOP: '\u25A0'
+, TRIANGLE_DOWN: '\u25BC'
+, TRIANGLE_UP: '\u25B2'
 }

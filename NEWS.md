@@ -1,6 +1,9 @@
 0.2.0 (in development)
 ----------------------
 
+* Added a quick session switching dropdown to the header, which activates when
+  there are multiple sessions available.
+
 * Added exporting of projects as a `.todo.txt` file.
 
 * Added session management to the settings screen.

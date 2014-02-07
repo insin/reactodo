@@ -70,6 +70,32 @@ input[type=text] {
   background-color: #5b5c56;
 }
 
+.menu-container {
+  position: relative;
+}
+
+.menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  float: left;
+  min-width: 160px;
+  border: 1px solid #5b5c56;
+  background-color: #272822;
+}
+
+.menu-item {
+  color: #fff;
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 5px 20px;
+}
+
+.menu-item:hover {
+  background-color: #49483e;
+}
+
 .tab-bar {
   display: table;
   width: 100%;
