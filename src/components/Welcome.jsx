@@ -45,7 +45,11 @@ var Welcome = React.createClass({
       </div>
     }
 
-    var datalistOptions = this.props.getSessions().map(function(session) {
+    var sessions = this.props.getSessions().filter(function(session) {
+      return session !== ''
+    })
+    sessions.sort()
+    var datalistOptions = sessions.map(function(session) {
       return <option value={session}/>
     })
 
