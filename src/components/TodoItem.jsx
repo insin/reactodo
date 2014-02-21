@@ -52,7 +52,7 @@ var TodoItem = React.createClass({
   }
 
 , handleDragStart: function(e) {
-    e.nativeEvent.dataTransfer.setData('text', '' + this.props.index)
+    e.dataTransfer.setData('text', '' + this.props.index)
     this.setState({dragging: true})
   }
 
@@ -72,14 +72,14 @@ var TodoItem = React.createClass({
       return
     }
     e.preventDefault()
-    e.nativeEvent.dataTransfer.dropEffect = 'move'
+    e.dataTransfer.dropEffect = 'move'
     this.props.onDragOver(this.props.todo)
   }
 
   /** Handles another TODO being dropped on this one. */
 , handleDrop: function(e) {
     e.preventDefault()
-    var fromIndex = Number(e.nativeEvent.dataTransfer.getData('text'))
+    var fromIndex = Number(e.dataTransfer.getData('text'))
     this.props.onMoveTodo(fromIndex, this.props.index)
   }
 

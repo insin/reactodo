@@ -33,7 +33,7 @@ var Project = React.createClass({
   /** Sets the drop effect for the [DOING] dropzone. */
 , handleDragOverDoing: function(e) {
     e.preventDefault()
-    e.nativeEvent.dataTransfer.dropEffect = 'move'
+    e.dataTransfer.dropEffect = 'move'
     if (!this.state.dragoverDoing) {
       this.setState({
         dragoverTodoId: null
@@ -52,7 +52,7 @@ var Project = React.createClass({
   /** Handles a TODO being dropped on the [DOING] dropzone. */
 , handleDropDoing: function(e) {
     e.preventDefault()
-    var index = Number(e.nativeEvent.dataTransfer.getData('text'))
+    var index = Number(e.dataTransfer.getData('text'))
     if (this.state.dragoverDoing) {
       this.setState({
         dragoverTodoId: null
