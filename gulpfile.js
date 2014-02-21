@@ -1,6 +1,8 @@
 var gulp = require('gulp')
 
 var glob = require('glob')
+var react = require('react-tools')
+var through = require('through2')
 
 var browserify = require('gulp-browserify')
 var clean = require('gulp-clean')
@@ -8,11 +10,36 @@ var concat = require('gulp-concat')
 var flatten = require('gulp-flatten')
 var jshint = require('gulp-jshint')
 var plumber = require('gulp-plumber')
-var react = require('gulp-react')
 var rename = require('gulp-rename')
 var template = require('gulp-template')
 var uglify = require('gulp-uglify')
 var gutil = require('gulp-util')
+
+function jsx(name) {
+  return through.obj(function (file, enc, cb) {
+    if (file.isNull()) {
+      this.push(file)
+      return cb()
+    }
+
+    if (file.isStream()) {
+      this.emit('error', new gutil.PluginError('jsx', 'Streaming not supported'))
+      return cb()
+    }
+
+    try {
+      file.contents = new Buffer(react.transform(file.contents.toString()))
+      file.path = gutil.replaceExtension(file.path, '.js')
+    }
+    catch (err) {
+      err.fileName = file.path
+      this.emit('error', new gutil.PluginError('gulp-react', err))
+    }
+
+    this.push(file)
+    cb()
+  })
+}
 
 var version = require('./package.json').version
 var jsExt = (gutil.env.production ? 'min.js' : 'js')
@@ -31,7 +58,7 @@ gulp.task('copy-js-src', function() {
 gulp.task('compile-jsx', function() {
   return gulp.src('./src/**/*.jsx')
     .pipe(plumber())
-    .pipe(react())
+    .pipe(jsx())
     .on('error', function(e) {
       console.error(e.message + '\n  in ' + e.fileName)
     })
@@ -77,7 +104,7 @@ gulp.task('bundle-js', ['lint'], function(){
 })
 
 gulp.task('dist-js', ['bundle-js'], function() {
-  return gulp.src(['./vendor/react-0.8.0.' + jsExt, './build/app.' + jsExt])
+  return gulp.src(['./vendor/react-0.9.0.' + jsExt, './build/app.' + jsExt])
     .pipe(gulp.dest('./dist/js'))
 })
 

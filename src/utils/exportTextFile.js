@@ -8,7 +8,8 @@ function exportTextFile(text, filename) {
     a.href = 'data:text/plain;base64,' + Base64.encode(text)
     a.download = filename
     var event = document.createEvent('MouseEvents')
-    event.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+    event.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0,
+                         false, false, false, false, 0, null)
     a.dispatchEvent(event)
   }
   else {

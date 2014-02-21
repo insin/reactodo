@@ -5,7 +5,7 @@ var breaks = /<br[^>]*>|<\/p>|<\/div>/g
 var allTags = /<\/?[^>]+>\s*/g
 var newlines = /\n/g
 
-// Leading and trailing whitespace, <br>s, &nbsp;s
+// Leading and trailing whitespace, <br>s & &nbsp;s
 var trimWhitespace = /^(?:\s|&nbsp;|<br[^>]*>)*|(?:\s|&nbsp;|<br[^>]*>)*$/g
 
 /**
