@@ -1,6 +1,6 @@
 {
   "name": "reactodo",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Multiple localStorage TODO lists, built with React",
   "dependencies": {},
   "devDependencies": {
@@ -18,7 +18,7 @@
     "gulp-uglify": "~0.2.0",
     "gulp-util": "~2.2.14",
     "jshint-stylish": "~0.1.5",
-    "react-tools": "0.9.x",
+    "react-tools": "~0.10.0",
     "through2": "0.4.x"
   },
   "author": "Jonathan Buchanan <jonathan.buchanan@gmail.com>",

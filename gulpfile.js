@@ -104,7 +104,7 @@ gulp.task('bundle-js', ['lint'], function(){
 })
 
 gulp.task('dist-js', ['bundle-js'], function() {
-  return gulp.src(['./vendor/react-0.9.0.' + jsExt, './build/app.' + jsExt])
+  return gulp.src(['./vendor/react-0.*.0.' + jsExt, './build/app.' + jsExt])
     .pipe(gulp.dest('./dist/js'))
 })
 
