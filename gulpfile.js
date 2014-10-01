@@ -1,16 +1,20 @@
+var path = require('path')
+
 var gulp = require('gulp')
 
+var browserify = require('browserify')
 var glob = require('glob')
 var react = require('react-tools')
+var source = require('vinyl-source-stream')
 var through = require('through2')
 
-var browserify = require('gulp-browserify')
-var clean = require('gulp-clean')
 var concat = require('gulp-concat')
 var flatten = require('gulp-flatten')
 var jshint = require('gulp-jshint')
 var plumber = require('gulp-plumber')
 var rename = require('gulp-rename')
+var rimraf = require('gulp-rimraf')
+var streamify = require('gulp-streamify')
 var template = require('gulp-template')
 var uglify = require('gulp-uglify')
 var gutil = require('gulp-util')
@@ -18,35 +22,39 @@ var gutil = require('gulp-util')
 function jsx(name) {
   return through.obj(function (file, enc, cb) {
     if (file.isNull()) {
-      this.push(file)
-      return cb()
+      return cb(null, file)
     }
 
     if (file.isStream()) {
-      this.emit('error', new gutil.PluginError('jsx', 'Streaming not supported'))
-      return cb()
+      return cb(new gutil.PluginError('jsx', 'Streaming not supported'))
     }
+
+    var contents = file.contents.toString()
+    if (path.extname(file.path) === '.jsx' && !(/\*\s*@jsx/.test(contents))) {
+      contents = '/** @jsx React.DOM */\n' + contents
+    }
+    var originalPath = file.path
 
     try {
-      file.contents = new Buffer(react.transform(file.contents.toString()))
-      file.path = gutil.replaceExtension(file.path, '.js')
+      file.contents = new Buffer(react.transform(contents))
+      file.path = gutil.replaceExtension(originalPath, '.js')
+      cb(null, file)
     }
-    catch (err) {
-      err.fileName = file.path
-      this.emit('error', new gutil.PluginError('gulp-react', err))
+    catch (e) {
+      cb(new gutil.PluginError('jsx', e, {
+        fileName: originalPath
+      }))
     }
-
-    this.push(file)
-    cb()
   })
 }
 
 var version = require('./package.json').version
 var jsExt = (gutil.env.production ? 'min.js' : 'js')
 
-gulp.task('clean', function() {
+gulp.task('clean', function(cb) {
+  rimraf()
   return gulp.src(['./build', './dist'], {read: false})
-    .pipe(clean())
+    .pipe(rimraf())
 })
 
 gulp.task('copy-js-src', function() {
@@ -55,7 +63,7 @@ gulp.task('copy-js-src', function() {
     .pipe(gulp.dest('./build/modules'))
 })
 
-gulp.task('compile-jsx', function() {
+gulp.task('transpile-jsx', function() {
   return gulp.src('./src/**/*.jsx')
     .pipe(plumber())
     .pipe(jsx())
@@ -66,37 +74,29 @@ gulp.task('compile-jsx', function() {
     .pipe(gulp.dest('./build/modules'))
 })
 
-gulp.task('lint', ['copy-js-src', 'compile-jsx'], function() {
+gulp.task('lint', ['copy-js-src', 'transpile-jsx'], function() {
   return gulp.src('./build/modules/*.js')
     .pipe(jshint('./.jshintrc'))
     .pipe(jshint.reporter('jshint-stylish'))
 })
 
-gulp.task('bundle-js', ['lint'], function(){
-  var stream = gulp.src(['./build/modules/app.js'])
-    .pipe(plumber())
-    .pipe(browserify({
-      debug: !gutil.env.production
-    }))
-    .on('prebundle', function(bundle) {
-        // Setting cwd as gulp-browserify is forcing browserify's basedir to be
-        // the dir containing the entry file.
-        glob.sync('*.js', {cwd: './build/modules'}).forEach(function(module) {
-          var expose = module.split('.').shift()
-          if (expose == 'app') return
-          bundle.require('./' + module, {expose: expose})
-        })
-      })
-    .on('error', function(e) {
-      console.error(e)
-    })
-    .pipe(concat('app.js'))
+gulp.task('bundle-js', ['lint'], function() {
+  var b = browserify('./build/modules/app.js', {debug: !gutil.env.production})
+
+  glob.sync('./build/modules/*.js').forEach(function(module) {
+    var expose = module.split('/').pop().split('.').shift()
+    if (expose == 'app') return
+    b.require(module, {expose: expose})
+  })
+
+  var stream = b.bundle()
+    .pipe(source('app.js'))
     .pipe(gulp.dest('./build'))
 
   if (gutil.env.production) {
     stream = stream
       .pipe(rename('app.min.js'))
-      .pipe(uglify())
+      .pipe(streamify(uglify()))
       .pipe(gulp.dest('./build'))
   }
 
@@ -104,7 +104,7 @@ gulp.task('bundle-js', ['lint'], function(){
 })
 
 gulp.task('dist-js', ['bundle-js'], function() {
-  return gulp.src(['./vendor/react-0.*.0.' + jsExt, './build/app.' + jsExt])
+  return gulp.src(['./vendor/react-*.*.*.' + jsExt, './build/app.' + jsExt])
     .pipe(gulp.dest('./dist/js'))
 })
 
