@@ -3,6 +3,7 @@
   "version": "0.2.3",
   "description": "Multiple localStorage TODO lists, built with React",
   "scripts": {
+    "dev": "gulp clean && gulp",
     "dist": "gulp clean && gulp dist --production"
   },
   "dependencies": {

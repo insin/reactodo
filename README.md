@@ -12,12 +12,22 @@ manage items instead of cut + paste.
 
 ## Build
 
-    npm install
-    npm install -g gulp
-    gulp
+Install dependencies:
 
+```
+npm install
+```
 
+Develop:
 
+```
+npm run dev
+```
 
+Production build:
+
+```
+npm run dist
+```
 
 ## MIT Licensed
