@@ -1,6 +1,6 @@
-/** @jsx React.DOM */
-
 'use strict';
+
+var React = require('react')
 
 var Constants = require('Constants')
 var TodoItem = require('TodoItem')
@@ -8,30 +8,30 @@ var TodoItem = require('TodoItem')
 var $c = require('classNames')
 
 var Project = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return {
       dragoverTodoId: null
     , dragoverDoing: false
     }
-  }
+  },
 
-, addTodo: function() {
+  addTodo() {
     this.props.onAddTodo(this.props.project)
-  }
+  },
 
-, deleteDoneTodos: function() {
+  deleteDoneTodos() {
     if (confirm('Are you sure you want to delete all completed TODOs in ' + this.props.project.name + '?')) {
       this.props.onDeleteDoneTodos(this.props.project)
     }
-  }
+  },
 
   /** Indicates that the [DOING] dropzone is a drop target. */
-, handleDragEnterDoing: function(e) {
+  handleDragEnterDoing(e) {
     e.preventDefault()
-  }
+  },
 
   /** Sets the drop effect for the [DOING] dropzone. */
-, handleDragOverDoing: function(e) {
+  handleDragOverDoing(e) {
     e.preventDefault()
     e.dataTransfer.dropEffect = 'move'
     if (!this.state.dragoverDoing) {
@@ -40,17 +40,17 @@ var Project = React.createClass({
       , dragoverDoing: true
       })
     }
-  }
+  },
 
   /** Removes the drop effect for the [DOING] dropzone. */
-, handeDragLeaveDoing: function(e) {
+  handeDragLeaveDoing(e) {
     if (this.state.dragoverDoing) {
       this.setState({dragoverDoing: false})
     }
-  }
+  },
 
   /** Handles a TODO being dropped on the [DOING] dropzone. */
-, handleDropDoing: function(e) {
+  handleDropDoing(e) {
     e.preventDefault()
     var index = Number(e.dataTransfer.getData('text'))
     if (this.state.dragoverDoing) {
@@ -60,52 +60,52 @@ var Project = React.createClass({
       })
     }
     this.props.onDoTodo(this.props.project, this.props.project.todos[index])
-  }
+  },
 
-, onToggleTodo: function(todo) {
+  onToggleTodo(todo) {
     this.props.onToggleTodo(this.props.project, todo)
-  }
+  },
 
-, onDoTodo: function(todo) {
+  onDoTodo(todo) {
     this.props.onDoTodo(this.props.project, todo)
-  }
+  },
 
-, stopDoingTodo: function() {
+  stopDoingTodo() {
     this.props.onStopDoingTodo(this.props.project)
-  }
+  },
 
-, onEditTodo: function(todo, newText) {
+  onEditTodo(todo, newText) {
     this.props.onEditTodo(this.props.project, todo, newText)
-  }
+  },
 
-, onDeleteTodo: function(todo) {
+  onDeleteTodo(todo) {
     this.props.onDeleteTodo(this.props.project, todo)
-  }
+  },
 
-, onDragOverTodo: function(todo) {
+  onDragOverTodo(todo) {
     if (this.state.dragoverTodoId != todo.id) {
       this.setState({dragoverTodoId: todo.id})
     }
-  }
+  },
 
-, onDragLeaveTodo: function() {
+  onDragLeaveTodo() {
     this.setState({dragoverTodoId: null})
-  }
+  },
 
-, onDragEndTodo: function() {
+  onDragEndTodo() {
     this.setState({
       dragoverTodoId: null
     , dragoverDoing: false
     })
-  }
+  },
 
-, onMoveTodo: function(fromIndex, toIndex) {
+  onMoveTodo(fromIndex, toIndex) {
     this.props.onMoveTodo(this.props.project, fromIndex, toIndex)
-  }
+  },
 
-, render: function() {
+  render() {
     var doing, todos = [], dones = []
-    this.props.project.todos.forEach(function(todo, index) {
+    this.props.project.todos.forEach((todo, index) => {
       var currentlyDoing = (this.props.project.doing === todo.id)
       var todoItem = <TodoItem
                        key={todo.id}
@@ -129,7 +129,7 @@ var Project = React.createClass({
       else {
         ;(todo.done ? dones : todos).push(todoItem)
       }
-    }.bind(this))
+    })
 
     var doneHeading
     if (dones.length > 0) {

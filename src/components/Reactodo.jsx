@@ -1,8 +1,7 @@
-/** @jsx React.DOM */
-
 'use strict';
 
-var Constants = require('Constants')
+var React = require('react')
+
 var Page = require('Page')
 var Project = require('Project')
 var Settings = require('Settings')
@@ -13,16 +12,18 @@ var extend = require('extend')
 var partial = require('partial')
 var uuid = require('uuid')
 
+var {LOCALSTORAGE_PREFIX, SETTINGS, TRIANGLE_DOWN, TRIANGLE_UP} = require('Constants')
+
 var Reactodo = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return this.getStateForSession(this.props.session)
-  }
+  },
 
   /**
    * Gets state for the named session, loading from localStorage if available.
    */
-, getStateForSession: function(session) {
-    var storedJSON = localStorage[Constants.LOCALSTORAGE_PREFIX + session]
+  getStateForSession(session) {
+    var storedJSON = localStorage[LOCALSTORAGE_PREFIX + session]
     var storedState = storedJSON ? JSON.parse(storedJSON) : {}
     var state =  extend({
       activeProjectId: null
@@ -35,16 +36,16 @@ var Reactodo = React.createClass({
        ? Page.TODO_LISTS
        : Page.WELCOME)
     return state
-  }
+  },
 
-, componentDidMount: function() {
+  componentDidMount() {
     this.updateWindowTitle()
-  }
+  },
 
   /**
    * Reloads state if the session name has changed.
    */
-, componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.props.session !== nextProps.session) {
       var sessionState = this.getStateForSession(nextProps.session)
       if (nextProps.keepPage) {
@@ -59,125 +60,125 @@ var Reactodo = React.createClass({
       }
       this.setState(sessionState)
     }
-  }
+  },
 
   /**
    * Stores session state when there's been a state change. Ensures the window
    * title is updated if the session changed as part of the update.
    */
-, componentDidUpdate: function(prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevProps.session !== this.props.session) {
       this.updateWindowTitle()
     }
-    localStorage[Constants.LOCALSTORAGE_PREFIX + this.props.session] = JSON.stringify({
+    localStorage[LOCALSTORAGE_PREFIX + this.props.session] = JSON.stringify({
       activeProjectId: this.state.activeProjectId
     , projects: this.state.projects
     })
-  }
+  },
 
-, updateWindowTitle: function() {
+  updateWindowTitle() {
     if (this.props.session) {
       document.title = this.props.session + ' - reactodo'
     }
     else {
       document.title = 'reactodo'
     }
-  }
+  },
 
   /**
    * Switches to another named session on the fly. If a keepPage option is
    * passed and is truthy, the current page state will be retained.
    */
-, switchSession: function(session, options) {
+  switchSession(session, options) {
     options = extend({keepPage: false}, options)
     if (typeof history !== 'undefined' && history.replaceState) {
       history.replaceState(session, session + ' - reactodo', '?' + encodeURIComponent(session))
     }
     this.setProps({session: session, keepPage: options.keepPage})
-  }
+  },
 
   /**
    * Determines session names present in localStorage.
    */
-, getSessions: function() {
+  getSessions() {
     return Object.keys(localStorage)
-      .filter(function(p) { return p.indexOf(Constants.LOCALSTORAGE_PREFIX) === 0 })
-      .map(function(p) { return p.substring(Constants.LOCALSTORAGE_PREFIX.length) })
-  }
+      .filter(function(p) { return p.indexOf(LOCALSTORAGE_PREFIX) === 0 })
+      .map(function(p) { return p.substring(LOCALSTORAGE_PREFIX.length) })
+  },
 
   /** Adds a new session without switching to it. */
-, addSession: function(sessionName) {
-    localStorage[Constants.LOCALSTORAGE_PREFIX + sessionName] = JSON.stringify({
+  addSession(sessionName) {
+    localStorage[LOCALSTORAGE_PREFIX + sessionName] = JSON.stringify({
       activeProjectId: null
     , projects: []
     })
     this.forceUpdate()
-  }
+  },
 
   /**
    * Copies session state from one name to another and deletes the original. If
    * the original was the active session, switches to it.
    */
-, editSessionName: function(session, newName) {
-    localStorage[Constants.LOCALSTORAGE_PREFIX + newName] =
-      localStorage[Constants.LOCALSTORAGE_PREFIX + session]
+  editSessionName(session, newName) {
+    localStorage[LOCALSTORAGE_PREFIX + newName] =
+      localStorage[LOCALSTORAGE_PREFIX + session]
     this.deleteSession(session)
     if (this.props.session === session) {
       this.switchSession(newName, {keepPage: true})
     }
-  }
+  },
 
-, deleteSession: function(sessionName) {
-    delete localStorage[Constants.LOCALSTORAGE_PREFIX + sessionName]
+  deleteSession(sessionName) {
+    delete localStorage[LOCALSTORAGE_PREFIX + sessionName]
     this.forceUpdate()
-  }
+  },
 
-, setPage: function(page) {
+  setPage(page) {
     this.setState({page: page})
-  }
+  },
 
   /**
    * Sets the given project id as active and switches to displaying its TODOs if
    * currently on another screen.
    */
-, setActiveProject: function(projectId) {
+  setActiveProject(projectId) {
     this.setState({
       activeProjectId: projectId
     , page: Page.TODO_LISTS
     })
-  }
+  },
 
-, addProject: function(projectName) {
+  addProject(projectName) {
     var id = uuid()
     this.state.projects.push({id: id, name: projectName, doing: null, todos: []})
     this.setState({projects: this.state.projects})
-  }
+  },
 
-, editProjectName: function(project, projectName) {
+  editProjectName(project, projectName) {
     project.name = projectName
     this.setState({projects: this.state.projects})
-  }
+  },
 
-, moveProjectUp: function(project, index) {
+  moveProjectUp(project, index) {
     this.state.projects.splice(index - 1, 0, this.state.projects.splice(index, 1)[0])
     this.setState({projects: this.state.projects})
-  }
+  },
 
-, moveProjectDown: function(project, index) {
+  moveProjectDown(project, index) {
     this.state.projects.splice(index + 1, 0, this.state.projects.splice(index, 1)[0])
     this.setState({projects: this.state.projects})
-  }
+  },
 
-, toggleProjectVisible: function(project) {
+  toggleProjectVisible(project) {
     project.hidden = !project.hidden
     this.setState({projects: this.state.projects})
-  }
+  },
 
   /**
    * Deletes a project and sets the next adjacent project as active if there are
    * any.
    */
-, deleteProject: function(project, index) {
+  deleteProject(project, index) {
     this.state.projects.splice(index, 1)
     var activeProjectId = this.state.activeProjectId
     if (this.state.projects.length === 0) {
@@ -195,26 +196,26 @@ var Reactodo = React.createClass({
       activeProjectId: activeProjectId
     , projects: this.state.projects
     })
-  }
+  },
 
-, addTodo: function(project) {
+  addTodo(project) {
     var id = uuid()
     project.todos.unshift({id: id , done: false, text: ''})
     this.setState({
       editTodoId: id
     , projects: this.state.projects
     })
-  }
+  },
 
-, editTodo: function(project, todo, newText) {
+  editTodo(project, todo, newText) {
     todo.text = newText
     this.setState({
       editTodoId: null
     , projects: this.state.projects
     })
-  }
+  },
 
-, moveTodo: function(project, fromIndex, toIndex) {
+  moveTodo(project, fromIndex, toIndex) {
     var fromTodo = project.todos[fromIndex]
       , toTodo = project.todos[toIndex]
     if (fromTodo.done !== toTodo.done) {
@@ -222,30 +223,30 @@ var Reactodo = React.createClass({
     }
     project.todos.splice(toIndex, 0, project.todos.splice(fromIndex, 1)[0])
     this.setState({projects: this.state.projects})
-  }
+  },
 
-, toggleTodo: function(project, todo) {
+  toggleTodo(project, todo) {
     todo.done = !todo.done
     if (project.doing === todo.id) {
       project.doing = null
     }
     this.setState({projects: this.state.projects})
-  }
+  },
 
-, doTodo: function(project, todo) {
+  doTodo(project, todo) {
     project.doing = todo.id
     if (todo.done) {
       todo.done = false
     }
     this.setState({projects: this.state.projects})
-  }
+  },
 
-, stopDoingTodo: function(project) {
+  stopDoingTodo(project) {
     project.doing = null
     this.setState({projects: this.state.projects})
-  }
+  },
 
-, deleteTodo: function(project, todo) {
+  deleteTodo(project, todo) {
     for (var i = 0, l = project.todos.length; i < l; i++) {
       if (project.todos[i].id === todo.id) {
         project.todos.splice(i, 1)
@@ -255,29 +256,29 @@ var Reactodo = React.createClass({
         return this.setState({projects: this.state.projects})
       }
     }
-  }
+  },
 
-, deleteDoneTodos: function(project) {
+  deleteDoneTodos(project) {
     project.todos = project.todos.filter(function(todo) { return !todo.done })
     this.setState({projects: this.state.projects})
-  }
+  },
 
-, showSessionMenu: function() {
+  showSessionMenu() {
     this.setState({showingSessionMenu: true})
-  }
+  },
 
-, pickSession: function(session, e) {
+  pickSession(session, e) {
     e.preventDefault()
     e.stopPropagation()
     this.hideSessionMenu()
     this.switchSession(session, {keepPage: true})
-  }
+  },
 
-, hideSessionMenu: function() {
+  hideSessionMenu() {
     this.setState({showingSessionMenu: false})
-  }
+  },
 
-, render: function() {
+  render() {
     var tabs = []
     var content
 
@@ -308,7 +309,7 @@ var Reactodo = React.createClass({
     }
 
     // Always display project tabs when available
-    this.state.projects.forEach(function(project) {
+    this.state.projects.forEach(project => {
       if (project.hidden) { return }
       var isActiveProject = (this.state.page === Page.TODO_LISTS &&
                              this.state.activeProjectId === project.id)
@@ -331,7 +332,7 @@ var Reactodo = React.createClass({
                     onMoveTodo={this.moveTodo}
                   />
       }
-    }.bind(this))
+    })
 
     // Ensure there's something in tabs so its display isn't collapsed (Chrome)
     if (!tabs.length) { tabs.push(' ') }
@@ -343,7 +344,7 @@ var Reactodo = React.createClass({
     if (!this.state.showingSessionMenu) {
       var sessionName = this.props.session
       if (multipleSessions) {
-        sessionName += ' ' + Constants.TRIANGLE_DOWN
+        sessionName += ' ' + TRIANGLE_DOWN
       }
       activeSession = <span className={$c({control: multipleSessions})} onClick={multipleSessions && this.showSessionMenu}>
         {sessionName}
@@ -351,26 +352,25 @@ var Reactodo = React.createClass({
     }
     else {
       activeSession = <span className="control" onClick={this.hideSessionMenu}>
-        {this.props.session + ' ' + Constants.TRIANGLE_UP}
+        {this.props.session + ' ' + TRIANGLE_UP}
       </span>
 
       sessions.sort()
       sessions.splice(sessions.indexOf(this.props.session), 1)
 
-      var menuItems = sessions.map(function(session, index) {
+      var menuItems = sessions.map((session, index) => {
         var sessionName = session || '(Default)'
         return <div className="menu-item" onClick={partial(this.pickSession, session)}>
           {sessionName}
         </div>
-      }.bind(this))
+      })
 
       sessionMenu = <div className="menu">{menuItems}</div>
     }
 
     return <div onClick={this.state.showingSessionMenu && this.hideSessionMenu}>
       <h1>
-        <span className="control" onClick={partial(this.setPage, Page.WELCOME)}>reactodo</span>
-        {' '}
+        <span className="control" onClick={partial(this.setPage, Page.WELCOME)}>reactodo</span>{' '}
         <small className="menu-container">{activeSession}{sessionMenu}</small>
       </h1>
       <div className="tab-bar">
@@ -380,7 +380,7 @@ var Reactodo = React.createClass({
             className={$c({active: this.state.page === Page.SETTINGS})}
             onClick={partial(this.setPage, Page.SETTINGS)}
             title="Settings"
-          >{Constants.SETTINGS}</li>
+          >{SETTINGS}</li>
         </ul>
       </div>
       <div className="panel">

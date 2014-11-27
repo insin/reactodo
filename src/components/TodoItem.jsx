@@ -1,40 +1,40 @@
-/** @jsx React.DOM */
-
 'use strict';
 
-var Constants = require('Constants')
+var React = require('react')
 
 var $c = require('classNames')
 var normaliseContentEditableHTML = require('normaliseContentEditableHTML')
 var partial = require('partial')
 
+var {CHECK, DRAG_HANDLE, NBSP} = require('Constants')
+
 var TodoItem = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return {
       dragging: false
     , editing: this.props.initialEdit || false
     }
-  }
+  },
 
-, componentDidMount: function() {
+  componentDidMount() {
     if (this.props.initialEdit) {
       this.refs.text.getDOMNode().focus()
     }
-  }
+  },
 
-, componentDidUpdate: function (prevProps, prevState) {
+  componentDidUpdate (prevProps, prevState) {
     if (this.state.editing && !prevState.editing) {
       this.refs.text.getDOMNode().focus()
     }
-  }
+  },
 
-, handleTextClick: function() {
+  handleTextClick() {
     if (!this.state.editing) {
       this.setState({editing: true})
     }
-  }
+  },
 
-, handleTextBlur: function() {
+  handleTextBlur() {
     if (this.state.editing) {
       var text = normaliseContentEditableHTML(this.refs.text.getDOMNode().innerHTML)
       // Re-apply normalised HTML to the TODO's text
@@ -49,39 +49,39 @@ var TodoItem = React.createClass({
         this.props.onEdit(this.props.todo, text)
       }
     }
-  }
+  },
 
-, handleDragStart: function(e) {
+  handleDragStart(e) {
     e.dataTransfer.setData('text', '' + this.props.index)
     this.setState({dragging: true})
-  }
+  },
 
-, handleDragEnd: function(e) {
+  handleDragEnd(e) {
     this.setState({dragging: false})
     this.props.onDragEnd()
-  }
+  },
 
   /** Indicates that this TODO is a drop target. */
-, handleDragEnter: function(e) {
+  handleDragEnter(e) {
     e.preventDefault()
-  }
+  },
 
   /** Sets the drop effect for this TODO. */
-, handleDragOver: function(e) {
+  handleDragOver(e) {
     if (this.state.dragging) {
       return
     }
     e.preventDefault()
     e.dataTransfer.dropEffect = 'move'
     this.props.onDragOver(this.props.todo)
-  }
+  },
 
   /** Handles another TODO being dropped on this one. */
-, handleDrop: function(e) {
+  handleDrop(e) {
     e.preventDefault()
     var fromIndex = Number(e.dataTransfer.getData('text'))
     this.props.onMoveTodo(fromIndex, this.props.index)
-  }
+  },
 
   /**
    * IE9 doesn't support draggable="true" on <span>s. This hack manually starts
@@ -89,15 +89,15 @@ var TodoItem = React.createClass({
    * doesn't always seem to work - without it, the classes which set style for
    * the item being dragged and dropzones being dragged over aren't applied.
    */
-, handleIE9DragHack: function(e) {
+  handleIE9DragHack(e) {
     e.preventDefault()
     if (window.event.button === 1) {
       var target = e.nativeEvent.target
       setTimeout(function() { target.dragDrop() }, 50)
     }
-  }
+  },
 
-, render: function() {
+  render() {
     var todoItemClassName = $c('todo-item', {
       'is-todo': !this.props.todo.done
     , 'is-done': this.props.todo.done
@@ -116,7 +116,7 @@ var TodoItem = React.createClass({
           onDragStart={this.handleDragStart}
           onDragEnd={this.handleDragEnd}
           onMouseDown={typeof window.isIE9 != 'undefined' && this.handleIE9DragHack}
-        >{Constants.DRAG_HANDLE}</span>
+        >{DRAG_HANDLE}</span>
       </div>
     }
 
@@ -130,7 +130,7 @@ var TodoItem = React.createClass({
              onDrop={!this.props.doing && this.handleDrop}
            >
       <div className="todo-item-toolbar">
-        <span className="control" onClick={partial(this.props.onToggle, this.props.todo)}>[{this.props.todo.done ? Constants.CHECK : Constants.NBSP}]</span>
+        <span className="control" onClick={partial(this.props.onToggle, this.props.todo)}>[{this.props.todo.done ? CHECK : NBSP}]</span>
       </div>
       <div
         className="todo-item-text"

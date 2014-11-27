@@ -1,8 +1,8 @@
-/** @jsx React.DOM */
-
 'use strict';
 
-var Constants = require('Constants')
+var React = require('react')
+
+var {ENTER_KEY, ESCAPE_KEY} = require('Constants')
 
 var trim = require('trim')
 
@@ -14,9 +14,9 @@ var EditInput = React.createClass({
   propTypes: {
     onCancel: React.PropTypes.func.isRequired
   , onSubmit: React.PropTypes.func.isRequired
-  }
+  },
 
-, getDefaultProps: function() {
+  getDefaultProps() {
     return {
       autoFocus: true
     , button: 'Submit'
@@ -25,15 +25,15 @@ var EditInput = React.createClass({
     , required: true
     , trim: true
     }
-  }
+  },
 
-, componentDidMount: function() {
+  componentDidMount() {
     if (this.props.autoFocus) {
       this.refs.input.getDOMNode().focus()
     }
-  }
+  },
 
-, submit: function() {
+  submit() {
     var value = this.refs.input.getDOMNode().value
     if (this.props.trim) {
       value = trim(value)
@@ -42,22 +42,22 @@ var EditInput = React.createClass({
       return
     }
     this.props.onSubmit(value)
-  }
+  },
 
-, cancel: function() {
+  cancel() {
     this.props.onCancel()
-  }
+  },
 
-, handleKeyDown: function(e) {
-    if (e.which === Constants.ENTER_KEY) {
+  handleKeyDown(e) {
+    if (e.which === ENTER_KEY) {
       this.submit()
     }
-    else if (e.which === Constants.ESCAPE_KEY) {
+    else if (e.which === ESCAPE_KEY) {
       this.cancel()
     }
-  }
+  },
 
-, render: function() {
+  render() {
     return <span>
       <input
         type="text"
@@ -65,10 +65,8 @@ var EditInput = React.createClass({
         defaultValue={this.props.defaultValue}
         ref="input"
         onKeyDown={this.handleKeyDown}
-      />
-      {' '}
-      <span className="button" onClick={this.submit}>{this.props.button}</span>
-      {' '}
+      />{' '}
+      <span className="button" onClick={this.submit}>{this.props.button}</span>{' '}
       <span className="button" onClick={this.cancel}>Cancel</span>
     </span>
   }

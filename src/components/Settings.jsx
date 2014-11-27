@@ -1,25 +1,26 @@
-/** @jsx React.DOM */
-
 'use strict';
 
-var Constants = require('Constants')
+var React = require('react')
+
 var EditInput = require('EditInput')
 
 var exportProject = require('exportProject')
 var exportTextFile = require('exportTextFile')
 var partial = require('partial')
 
+var {CHECK, DOWN_ARROW, NBSP, UP_ARROW} = require('Constants')
+
 var Settings = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return {
       addingProject: false
     , addingSession: false
     , editingProjectName: null
     , editingSessionName: null
     }
-  }
+  },
 
-, addProject: function(projectName) {
+  addProject(projectName) {
     if (!this.state.addingProject) {
       this.setState({addingProject: true})
     }
@@ -27,13 +28,13 @@ var Settings = React.createClass({
       this.setState({addingProject: false})
       this.props.onAddProject(projectName)
     }
-  }
+  },
 
-, cancelAddProject: function() {
+  cancelAddProject() {
     this.setState({addingProject: false})
-  }
+  },
 
-, editProjectName: function(project, projectName) {
+  editProjectName(project, projectName) {
     if (this.state.editingProjectName !== project.id) {
       this.setState({editingProjectName: project.id})
     }
@@ -41,23 +42,23 @@ var Settings = React.createClass({
       this.setState({editingProjectName: null})
       this.props.onEditProjectName(project, projectName)
     }
-  }
+  },
 
-, cancelEditProjectName: function() {
+  cancelEditProjectName() {
     this.setState({editingProjectName: null})
-  }
+  },
 
-, deleteProject: function(project, index) {
+  deleteProject(project, index) {
     if (confirm('Are you sure you want to delete "' + project.name + '"?')) {
       this.props.onDeleteProject(project, index)
     }
-  }
+  },
 
-, sessionNameAlreadyExists: function(name) {
+  sessionNameAlreadyExists(name) {
     return (this.props.getSessions().indexOf(name) != -1)
-  }
+  },
 
-, addSession: function(sessionName) {
+  addSession(sessionName) {
     if (!this.state.addingSession) {
       this.setState({addingSession: true})
     }
@@ -68,13 +69,13 @@ var Settings = React.createClass({
       this.setState({addingSession: false})
       this.props.onAddSession(sessionName)
     }
-  }
+  },
 
-, cancelAddSession: function() {
+  cancelAddSession() {
     this.setState({addingSession: false})
-  }
+  },
 
-, editSessionName: function(session, newName) {
+  editSessionName(session, newName) {
     if (this.state.editingSessionName !== session) {
       this.setState({editingSessionName: session})
     }
@@ -87,29 +88,29 @@ var Settings = React.createClass({
         this.props.onEditSessionName(session, newName)
       }
     }
-  }
+  },
 
-, cancelEditSessionName: function() {
+  cancelEditSessionName() {
     this.setState({editingSessionName: null})
-  }
+  },
 
-, deleteSession: function(session) {
+  deleteSession(session) {
     if (confirm('Are you sure you want to delete "' + session +
                 '"? All Projects and TODOs will be lost.')) {
       this.props.onDeleteSession(session)
     }
     this.forceUpdate()
-  }
+  },
 
-, toggleProjectVisible: function(project) {
+  toggleProjectVisible(project) {
     this.props.onToggleProjectVisible(project)
-  }
+  },
 
-, exportProject: function(project) {
+  exportProject(project) {
     exportTextFile(exportProject(project), project.name + '.todo.txt')
-  }
+  },
 
-, render: function() {
+  render() {
     var addProject
     if (this.state.addingProject) {
       addProject = <EditInput
@@ -131,8 +132,8 @@ var Settings = React.createClass({
               <th>Name</th>
               <th>Order</th>
               <th>Show?</th>
-              <th>{Constants.NBSP}</th>
-              <th>{Constants.NBSP}</th>
+              <th>{NBSP}</th>
+              <th>{NBSP}</th>
             </tr>
           </thead>
           <tbody>
@@ -161,8 +162,8 @@ var Settings = React.createClass({
           <tr>
             <th>Name</th>
             <th>Current?</th>
-            <th>{Constants.NBSP}</th>
-            <th>{Constants.NBSP}</th>
+            <th>{NBSP}</th>
+            <th>{NBSP}</th>
           </tr>
         </thead>
         <tbody>
@@ -178,19 +179,19 @@ var Settings = React.createClass({
       <h2>[SESSIONS] {addSession}</h2>
       {sessions}
     </div>
-  }
+  },
 
-, renderProject: function(project, i, projects) {
+  renderProject(project, i, projects) {
     var first = (i === 0)
     var last = (i == projects.length - 1)
-    var up = (first ? <span>{Constants.NBSP}</span> :
+    var up = (first ? <span>{NBSP}</span> :
       <span className="control" onClick={partial(this.props.onMoveProjectUp, project, i)}>
-        {Constants.UP_ARROW}
+        {UP_ARROW}
       </span>
     )
-    var down = (last ? <span>{Constants.NBSP}</span> :
+    var down = (last ? <span>{NBSP}</span> :
       <span className="control" onClick={partial(this.props.onMoveProjectDown, project, i)}>
-        {Constants.DOWN_ARROW}
+        {DOWN_ARROW}
       </span>
     )
     var projectName
@@ -210,10 +211,10 @@ var Settings = React.createClass({
 
     return <tr key={project.id}>
       <td>{projectName}</td>
-      <td className="project-order">{up}{Constants.NBSP}{down}</td>
+      <td className="project-order">{up}{NBSP}{down}</td>
       <td className="project-show">
         <span className="control" onClick={partial(this.props.onToggleProjectVisible, project)}>
-          [{project.hidden ? Constants.NBSP : Constants.CHECK}]
+          [{project.hidden ? NBSP : CHECK}]
         </span>
       </td>
       <td>
@@ -223,9 +224,9 @@ var Settings = React.createClass({
         <span className="button" onClick={partial(this.deleteProject, project, i)}>Delete</span>
       </td>
     </tr>
-  }
+  },
 
-, renderSession: function(session) {
+  renderSession(session) {
     var displayName = (session === '' ? '(Default)' : session)
     var isActiveSession = (session === this.props.session)
     var sessionName
@@ -242,8 +243,8 @@ var Settings = React.createClass({
         {displayName}
       </span>
     }
-    var switchSession = Constants.NBSP
-    var deleteSession = Constants.NBSP
+    var switchSession = NBSP
+    var deleteSession = NBSP
     if (!isActiveSession) {
       switchSession = <span className="button" onClick={partial(this.props.onSwitchSession, session, {keepPage: true})}>
         Switch
@@ -255,7 +256,7 @@ var Settings = React.createClass({
 
     return <tr key={session}>
       <td>{sessionName}</td>
-      <td className="session-current">{isActiveSession ? '[' + Constants.CHECK + ']' : Constants.NBSP}</td>
+      <td className="session-current">{isActiveSession ? '[' + CHECK + ']' : NBSP}</td>
       <td>{switchSession}</td>
       <td>{deleteSession}</td>
     </tr>
